@@ -1,0 +1,16 @@
+.section {
+    margin-top: 0.5rem;
+    margin-left: 0.5rem;
+    margin-right: 0.5rem;
+
+    .section-title {
+        font-weight: bold;
+        margin-left: 0.5rem;
+    }
+
+    .section-content {
+        background-color: #444444;
+        padding: 0.5rem;
+        border-radius: 2px;
+    }
+}

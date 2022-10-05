@@ -1,0 +1,35 @@
+.dialog-backdrop {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.75);
+}
+
+.dialog {
+    border: 1px solid #444444;
+    border-radius: 5px;
+    background-color: #333333;
+    width: 80%;
+
+    .dialog-title {
+        padding: 1rem;
+        border-bottom: 1px solid #444444;
+        font-weight: bold;
+    }
+
+    .dialog-body {
+        padding: 1rem;
+    }
+
+    .dialog-footer {
+        padding: 1rem;
+        border-top: 1px solid #444444;
+        display: flex;
+        justify-content: flex-end;
+    }
+}

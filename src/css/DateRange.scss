@@ -1,0 +1,13 @@
+.date-range {
+    display: grid;
+    grid-template-columns: 49% 49%;
+    column-gap: 2%;
+
+    .not-before {
+        grid-area: 1 / 1 / 2 / 2;
+    }
+
+    .not-after {
+        grid-area: 1 / 2 / 2 / 3;
+    }
+}
