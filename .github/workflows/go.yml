@@ -16,7 +16,7 @@ jobs:
       - uses: actions/checkout@7884fcad6b5d53d10323aee724dc68d8b9096a2e # pin@v2.4.2
 
       - name: Set up Go
-        uses: actions/setup-go@b22fbbc2921299758641fab08929b4ac52b32923 # pin@v3.2.0
+        uses: actions/setup-go@268d8c0ca0432bb2cf416faae41297df9d262d7f # pin@v3.2.0
         with:
           go-version: 1.19.2
 
