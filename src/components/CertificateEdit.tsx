@@ -1,12 +1,11 @@
 import * as React from 'react';
-import { CertificateRequest, DateRange, Name, KeyUsage, AlternateName, KeyType } from '../types/types';
+import { CertificateRequest, DateRange, Name, KeyUsage, AlternateName } from '../types/types';
 import { AlternateNamesEdit } from './AlternateNameEdit';
 import { DateRangeEdit } from './DateRangeEdit';
 import { KeyUsageEdit } from './KeyUsageEdit';
 import { NameEdit } from './NameEdit';
 import { Button } from './Button';
 import '../css/CertificateEdit.scss';
-import { KeyTypeEdit } from './KeyTypeEdit';
 
 interface CertificateEditProps {
     defaultValue: CertificateRequest;
@@ -30,13 +29,6 @@ export const CertificateEdit: React.FC<CertificateEditProps> = (props: Certifica
     const onChangeSubject = (Subject: Name) => {
         setRequest(request => {
             request.Subject = Subject;
-            return { ...request };
-        });
-    };
-
-    const onChangeKeyType = (KeyType: KeyType) => {
-        setRequest(request => {
-            request.KeyType = KeyType;
             return { ...request };
         });
     };
@@ -73,7 +65,6 @@ export const CertificateEdit: React.FC<CertificateEditProps> = (props: Certifica
         <div>
             <DateRangeEdit defaultValue={Request.Validity} onChange={onChangeDateRange} />
             <NameEdit defaultValue={Request.Subject} onChange={onChangeSubject} />
-            <KeyTypeEdit defaultValue={Request.KeyType} onChange={onChangeKeyType} />
             <AlternateNamesEdit defaultValue={Request.AlternateNames} onChange={onChangeAlternateNames} />
             <KeyUsageEdit defaultValue={Request.Usage} onChange={onChangeKeyUsage} />
         </div>
