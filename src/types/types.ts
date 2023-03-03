@@ -11,8 +11,13 @@ export enum KeyType {
 	KeyTypeECDSA_256 = 'ecc256',
 }
 
+export enum SignatureType {
+    SignatureAlgorithmSHA256 = 'sha256',
+}
+
 export interface CertificateRequest {
     KeyType: KeyType;
+    SignatureAlgorithm: SignatureType;
     Subject: Name;
     Validity: DateRange;
     AlternateNames?: AlternateName[];
@@ -24,6 +29,7 @@ export interface CertificateRequest {
 export const DefaultCertificateRequest = (): CertificateRequest => {
     return {
         KeyType: KeyType.KeyTypeECDSA_256,
+        SignatureAlgorithm: SignatureType.SignatureAlgorithmSHA256,
         Subject: {
             Organization: '',
             City: '',
@@ -77,6 +83,7 @@ export interface ExportParams {
 export enum ExportFormatType {
     PKCS12 = 'PKCS12',
     PEM = 'PEM',
+    DER = 'DER',
 }
 
 export interface KeyUsage {
@@ -98,6 +105,7 @@ export interface KeyUsage {
     EmailProtection?: boolean;
     TimeStamping?: boolean;
     OCSPSigning?: boolean;
+    CustomEKUs?: string[];
 }
 
 export interface ExportedCertificate {

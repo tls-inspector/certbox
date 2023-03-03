@@ -37,7 +37,7 @@ export const AlternateNamesEdit: React.FC<AlternateNamesEditProps> = (props: Alt
 
     const removeButtonClick = () => {
         setNames(names => {
-            names.splice(names.length-1, 1);
+            names.splice(names.length - 1, 1);
             return [...names];
         });
     };
@@ -73,14 +73,14 @@ const AlternateNameEdit: React.FC<AlternateNameEditProps> = (props: AlternateNam
     const changeType = (Type: string) => {
         setName(name => {
             name.Type = Type as AlternateNameType;
-            return {...name};
+            return { ...name };
         });
     };
 
     const changeValue = (Value: string) => {
         setName(name => {
             name.Value = Value;
-            return {...name};
+            return { ...name };
         });
     };
 

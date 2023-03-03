@@ -24,11 +24,11 @@ export const ImportPasswordDialog: React.FC<ImportPasswordDialogProps> = (props:
             onClick: () => {
                 try {
                     const response = Wasm.ImportRootCertificate(props.p12Data, Password);
-                    props.onImport(response.Certificate);
-                    return true;
+                    props.onImport(response);
+                    return Promise.resolve(true);
                 } catch {
                     SetIncorrectPassword(true);
-                    return false;
+                    return Promise.resolve(false);
                 }
             }
         },

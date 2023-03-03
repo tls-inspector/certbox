@@ -30,7 +30,8 @@ func main() {
 	js.Global().Set("Ping", jsPing())
 	js.Global().Set("ImportRootCertificate", jsImportRootCertificate())
 	js.Global().Set("CloneCertificate", jsCloneCertificate())
-	js.Global().Set("ExportCertificate", jsExportCertificate())
+	js.Global().Set("GenerateCertificates", jsGenerateCertificates())
+	js.Global().Set("ExportCertificates", jsExportCertificates())
 	js.Global().Set("ZipFiles", jsZipFiles())
 	<-make(chan bool)
 }
@@ -115,9 +116,33 @@ func jsCloneCertificate() js.Func {
 	})
 }
 
-func jsExportCertificate() js.Func {
+func jsGenerateCertificates() js.Func {
 	return js.FuncOf(func(this js.Value, args []js.Value) interface{} {
-		fmt.Printf("invoke: ExportCertificate()\n")
+		fmt.Printf("invoke: GenerateCertificates()\n")
+
+		defer func() {
+			recover()
+		}()
+
+		params := certbox.GenerateCertificatesParameters{}
+		if err := json.Unmarshal([]byte(args[0].String()), &params); err != nil {
+			return WasmError(err)
+		}
+		response, err := certbox.GenerateCertificates(params)
+		if err != nil {
+			return WasmError(err)
+		}
+		data, err := json.Marshal(response)
+		if err != nil {
+			return WasmError(err)
+		}
+		return string(data)
+	})
+}
+
+func jsExportCertificates() js.Func {
+	return js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+		fmt.Printf("invoke: ExportCertificates()\n")
 
 		defer func() {
 			recover()

@@ -2,6 +2,10 @@ import * as React from 'react';
 import { KeyUsage } from '../types/types';
 import { Checkbox } from './Checkbox';
 import { Section } from './Section';
+import { Button } from './Button';
+import { Dialog } from './Dialog';
+import { GlobalDialogFrame } from './DialogFrame';
+import { Input } from './Input';
 import '../css/Checkbox.scss';
 
 interface KeyUsageEditProps {
@@ -124,6 +128,28 @@ export const KeyUsageEdit: React.FC<KeyUsageEditProps> = (props: KeyUsageEditPro
         });
     };
 
+    const customEkuClick = () => {
+        const onChange = (oids?: string[]) => {
+            if (!oids) {
+                return;
+            }
+
+            setUsage(usage => {
+                usage.CustomEKUs = oids;
+                return { ...usage };
+            });
+        };
+
+        GlobalDialogFrame.showDialog(<CustomEkuDialog defaultValue={Usage.CustomEKUs} onChange={onChange} />);
+    };
+
+    const customEkuLabel = () => {
+        if (!Usage.CustomEKUs) {
+            return null;
+        }
+
+        return (<span>{Usage.CustomEKUs.length} value{Usage.CustomEKUs.length == 1 ? '' : 's'}</span>);
+    };
 
     return (
         <Section title="Key Usage">
@@ -144,6 +170,81 @@ export const KeyUsageEdit: React.FC<KeyUsageEditProps> = (props: KeyUsageEditPro
                 <Checkbox label="Time Stamping" defaultValue={Usage.TimeStamping} onChange={onChangeTimeStamping} />
                 <Checkbox label="OCSP Signing" defaultValue={Usage.OCSPSigning} onChange={onChangeOCSPSigning} />
             </div>
+            <div className="eku-custom">
+                <Button small onClick={customEkuClick}>Custom</Button>
+                {customEkuLabel()}
+            </div>
         </Section>
+    );
+};
+
+interface CustomEkuDialogProps {
+    defaultValue: string[];
+    onChange: (request?: string[]) => (void);
+}
+const CustomEkuDialog: React.FC<CustomEkuDialogProps> = (props: CustomEkuDialogProps) => {
+    const [CustomEKUs, SetCustomEKUs] = React.useState(props.defaultValue || []);
+
+    const changeEKUAtIdx = (idx: number) => {
+        return (eku: string) => {
+            SetCustomEKUs(ekus => {
+                ekus[idx] = eku;
+                return [...ekus];
+            });
+        };
+    };
+
+    const addButtonClick = () => {
+        SetCustomEKUs(ekus => {
+            return [...ekus, ''];
+        });
+    };
+
+    const removeButtonClick = () => {
+        SetCustomEKUs(ekus => {
+            ekus.splice(ekus.length - 1, 1);
+            return [...ekus];
+        });
+    };
+
+    const removeButtonEnabled = () => {
+        return CustomEKUs.length > 0;
+    };
+
+    const buttons = [
+        {
+            label: 'Discard',
+            onClick: () => {
+                props.onChange();
+                return Promise.resolve(true);
+            }
+        },
+        {
+            label: 'Apply',
+            onClick: () => {
+                const ekus = [...CustomEKUs];
+                for (let i = ekus.length - 1; i >= 0; i--) {
+                    const valid = ekus[i].length > 0 && ekus[i].match(/[^0-9\\.]+/) == null;
+                    if (valid) {
+                        continue;
+                    }
+                    ekus.splice(i, 1);
+                }
+                props.onChange(ekus.length > 0 ? ekus : null);
+                return Promise.resolve(true);
+            }
+        }
+    ];
+
+    return (
+        <Dialog title="Custom Extended Key Usage" buttons={buttons}>
+            {
+                CustomEKUs.map((eku, idx) => {
+                    return (<Input key={idx} type="oid" placeholder="1.3.6.1.5.5.7.3.1" label="OID" defaultValue={eku} onChange={changeEKUAtIdx(idx)} required />);
+                })
+            }
+            <Button small onClick={addButtonClick}>+</Button>
+            <Button small onClick={removeButtonClick} disabled={!removeButtonEnabled()}>-</Button>
+        </Dialog>
     );
 };

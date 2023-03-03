@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { AlternateNameType, Certificate, CertificateRequest, DefaultCertificateRequest, KeyType } from './types/types';
+import { AlternateNameType, Certificate, CertificateRequest, DefaultCertificateRequest, KeyType, SignatureType } from './types/types';
 import { CertificateList } from './components/CertificateList';
 import { Calendar } from './services/Calendar';
 import { Button } from './components/Button';
@@ -109,6 +109,7 @@ export const App: React.FC = () => {
                 const certificates = state.certificates;
                 certificates[0] = {
                     KeyType: KeyType.KeyTypeECDSA_256,
+                    SignatureAlgorithm: SignatureType.SignatureAlgorithmSHA256,
                     Subject: certificate.Subject,
                     Validity: {
                         NotBefore: Calendar.now(),
@@ -133,7 +134,7 @@ export const App: React.FC = () => {
         const pemData = await Filesystem.ReadFile('.cer,.crt,.pem,.txt,application/x-pem-file');
         const response = Wasm.CloneCertificate(pemData);
         setState(state => {
-            state.certificates[idx] = response.Certificate;
+            state.certificates[idx] = response;
             state.certificateEditKey = Rand.ID();
             return { ...state };
         });

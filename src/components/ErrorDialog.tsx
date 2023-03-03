@@ -9,8 +9,9 @@ interface ErrorDialogProps {
 const ErrorDialog: React.FC<ErrorDialogProps> = (props: ErrorDialogProps) => {
     const reloadButton = {
         label: 'Reload',
-        onClick: () => {
+        onClick: (): Promise<boolean> => {
             location.reload();
+            return Promise.resolve(true);
         },
     };
 

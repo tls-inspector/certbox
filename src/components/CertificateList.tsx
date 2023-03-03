@@ -85,7 +85,7 @@ const CertificateListItem: React.FC<CertificateListItemProps> = (props: Certific
     let invalid: JSX.Element = null;
     if (props.invalidReason) {
         invalid = (<div className="certificate-invalid">
-            <Icon.ExclamationCircle title={props.invalidReason} />
+            <Icon.ExclamationCircle title={props.invalidReason} color='red' />
         </div>);
     }
 
