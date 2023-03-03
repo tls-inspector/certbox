@@ -28,12 +28,12 @@ export const ExportDialog: React.FC<ExportDialogProps> = (props: ExportDialogPro
 
     const doExport = () => {
         const response = Wasm.ExportCertificate({
-            requests: props.requests,
-            imported_root: props.importedRoot,
-            format: Format,
-            password: Password
+            Requests: props.requests,
+            ImportedRoot: props.importedRoot,
+            Format: Format,
+            Password: Password
         });
-        SetExportedFiles(response.files);
+        SetExportedFiles(response.Files);
     };
 
     const buttons = [
@@ -93,10 +93,10 @@ const SaveDialog: React.FC<SaveDialogProps> = (props: SaveDialogProps) => {
             label: 'Save All',
             onClick: () => {
                 const response = Wasm.ZipFiles({
-                    files: props.files
+                    Files: props.files
                 });
 
-                Filesystem.SaveFile(response.file);
+                Filesystem.SaveFile(response.File);
             }
         },
         {
@@ -117,7 +117,7 @@ const SaveDialog: React.FC<SaveDialogProps> = (props: SaveDialogProps) => {
                     props.files.map((file, idx) => {
                         return (
                             <tr key={idx}>
-                                <td>{file.name}</td>
+                                <td>{file.Name}</td>
                                 <td><Button onClick={saveClick(file)}><Icon.Label icon={<Icon.Save />} label="Save" /></Button></td>
                             </tr>
                         );

@@ -1,10 +1,16 @@
 package main
 
 import (
+	"archive/zip"
+	"bytes"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"runtime"
+	"strings"
 	"syscall/js"
+
+	"github.com/tls-inspector/certbox-go"
 )
 
 var Version = ""
@@ -12,7 +18,7 @@ var BuildId = ""
 
 func WasmError(err error) string {
 	type eType struct {
-		Error string `json:"error"`
+		Error string
 	}
 
 	data, _ := json.Marshal(eType{err.Error()})
@@ -25,7 +31,6 @@ func main() {
 	js.Global().Set("ImportRootCertificate", jsImportRootCertificate())
 	js.Global().Set("CloneCertificate", jsCloneCertificate())
 	js.Global().Set("ExportCertificate", jsExportCertificate())
-	js.Global().Set("GetVersion", jsGetVersion())
 	js.Global().Set("ZipFiles", jsZipFiles())
 	<-make(chan bool)
 }
@@ -38,11 +43,23 @@ func jsPing() js.Func {
 			recover()
 		}()
 
+		type PingParameters struct {
+			Nonce string
+		}
+
 		params := PingParameters{}
 		if err := json.Unmarshal([]byte(args[0].String()), &params); err != nil {
 			return WasmError(err)
 		}
-		response := Ping(params)
+		type PingResponseType struct {
+			OK    bool
+			Nonce string
+		}
+
+		response := PingResponseType{
+			OK:    true,
+			Nonce: params.Nonce,
+		}
 		data, err := json.Marshal(response)
 		if err != nil {
 			return WasmError(err)
@@ -59,10 +76,11 @@ func jsImportRootCertificate() js.Func {
 			recover()
 		}()
 
-		p12Data := jsValueToByte(args[0])
-		password := args[1].String()
-
-		response, err := ImportRootCertificate(p12Data, password)
+		parameters := certbox.ImportRootCertificateParameters{
+			Password: args[1].String(),
+			Data:     jsValueToByte(args[0]),
+		}
+		response, err := certbox.ImportRootCertificate(parameters)
 		if err != nil {
 			return WasmError(err)
 		}
@@ -82,7 +100,10 @@ func jsCloneCertificate() js.Func {
 			recover()
 		}()
 
-		response, err := CloneCertificate(jsValueToByte(args[0]))
+		parameters := certbox.CloneCertificateParameters{
+			Data: jsValueToByte(args[0]),
+		}
+		response, err := certbox.CloneCertificate(parameters)
 		if err != nil {
 			return WasmError(err)
 		}
@@ -102,11 +123,11 @@ func jsExportCertificate() js.Func {
 			recover()
 		}()
 
-		params := ExportCertificateParameters{}
+		params := certbox.ExportCertificatesParameters{}
 		if err := json.Unmarshal([]byte(args[0].String()), &params); err != nil {
 			return WasmError(err)
 		}
-		response, err := ExportCertificate(params)
+		response, err := certbox.ExportCertificates(params)
 		if err != nil {
 			return WasmError(err)
 		}
@@ -134,18 +155,59 @@ func jsZipFiles() js.Func {
 			recover()
 		}()
 
+		type ZipFilesParameters struct {
+			Files []certbox.ExportedCertificate
+		}
+
+		type ExportedFile struct {
+			Name string
+			Mime string
+			Data string
+		}
+
+		type ZipFilesResponse struct {
+			File ExportedFile
+		}
+
 		params := ZipFilesParameters{}
 		if err := json.Unmarshal([]byte(args[0].String()), &params); err != nil {
 			return WasmError(err)
 		}
-		response, err := ZipFiles(params)
-		if err != nil {
-			return WasmError(err)
+
+		fileName := strings.Split(params.Files[0].Name, ".")[0] + ".zip"
+
+		buf := &bytes.Buffer{}
+		zw := zip.NewWriter(buf)
+		for _, file := range params.Files {
+			zf, err := zw.Create(file.Name)
+			if err != nil {
+				return WasmError(err)
+			}
+			zf.Write([]byte(file.Data))
 		}
+		zw.Flush()
+		zw.Close()
+
+		response := ZipFilesResponse{
+			File: ExportedFile{
+				Name: fileName,
+				Data: base64.StdEncoding.EncodeToString(buf.Bytes()),
+			},
+		}
+
 		data, err := json.Marshal(response)
 		if err != nil {
 			return WasmError(err)
 		}
 		return string(data)
 	})
+}
+
+func jsValueToByte(v js.Value) []byte {
+	length := v.Length()
+	data := make([]byte, length)
+	for i := 0; i < length; i++ {
+		data[i] = byte(v.Index(i).Int())
+	}
+	return data
 }

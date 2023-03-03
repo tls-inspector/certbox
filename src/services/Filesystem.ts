@@ -39,8 +39,8 @@ export class Filesystem {
         const a = document.createElement('a');
         a.id = id;
         a.style.display = 'none';
-        a.href = 'data:' + file.mime + ';base64,' + file.data;
-        a.download = file.name;
+        a.href = 'data:' + file.Mime + ';base64,' + file.Data;
+        a.download = file.Name;
         a.onclick = () => {
             a.remove();
         };

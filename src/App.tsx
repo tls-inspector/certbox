@@ -133,7 +133,7 @@ export const App: React.FC = () => {
         const pemData = await Filesystem.ReadFile('.cer,.crt,.pem,.txt,application/x-pem-file');
         const response = Wasm.CloneCertificate(pemData);
         setState(state => {
-            state.certificates[idx] = response.certificate;
+            state.certificates[idx] = response.Certificate;
             state.certificateEditKey = Rand.ID();
             return { ...state };
         });

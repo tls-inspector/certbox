@@ -2,48 +2,48 @@ import { Certificate, CertificateRequest } from '../types/types';
 import { Rand } from './Rand';
 
 export interface WasmError {
-    error: string;
+    Error: string;
 }
 
 export interface PingParameters {
-    nonce: string;
+    Nonce: string;
 }
 
 export interface PingResponse {
-    nonce: string;
+    Nonce: string;
 }
 
 export interface ImportRootCertificateResponse {
-    certificate: Certificate;
+    Certificate: Certificate;
 }
 
 export interface CloneCertificateResponse {
-    certificate: CertificateRequest;
+    Certificate: CertificateRequest;
 }
 
 export interface ExportCertificateParameters {
-    requests: CertificateRequest[];
-    imported_root?: Certificate;
-    format: string;
-    password?: string;
+    Requests: CertificateRequest[];
+    ImportedRoot?: Certificate;
+    Format: string;
+    Password?: string;
 }
 
 export interface ExportedFile {
-    name: string;
-    mime: string;
-    data: string;
+    Name: string;
+    Mime: string;
+    Data: string;
 }
 
 export interface ExportCertificateResponse {
-    files: ExportedFile[];
+    Files: ExportedFile[];
 }
 
 export interface ZipFilesParameters {
-    files: ExportedFile[];
+    Files: ExportedFile[];
 }
 
 export interface ZipFilesResponse {
-    file: ExportedFile;
+    File: ExportedFile;
 }
 
 interface WasmBridge {
@@ -66,8 +66,8 @@ export class Wasm {
                 WebAssembly.instantiateStreaming(fetch('wasm/certgen.wasm'), go.importObject).then((result) => {
                     go.run(result.instance);
                     const nonce = 'wasm-' + Rand.ID();
-                    const reply = Wasm.Ping({ nonce: nonce });
-                    if (reply.nonce !== nonce) {
+                    const reply = Wasm.Ping({ Nonce: nonce });
+                    if (reply.Nonce !== nonce) {
                         throw new Error('bad nonce');
                     }
                     resolve();
@@ -80,32 +80,32 @@ export class Wasm {
 
     public static Ping(params: PingParameters): PingResponse {
         const response = JSON.parse(this.wasm.Ping(JSON.stringify(params)));
-        if ((response as WasmError).error) {
-            throw new Error((response as WasmError).error);
+        if ((response as WasmError).Error) {
+            throw new Error((response as WasmError).Error);
         }
         return response as PingResponse;
     }
 
     public static ImportRootCertificate(data: Uint8Array, password: string): ImportRootCertificateResponse {
         const response = JSON.parse(this.wasm.ImportRootCertificate(Array.prototype.slice.call(data), password));
-        if ((response as WasmError).error) {
-            throw new Error((response as WasmError).error);
+        if ((response as WasmError).Error) {
+            throw new Error((response as WasmError).Error);
         }
         return response as ImportRootCertificateResponse;
     }
 
     public static CloneCertificate(data: Uint8Array): CloneCertificateResponse {
         const response = JSON.parse(this.wasm.CloneCertificate(Array.prototype.slice.call(data)));
-        if ((response as WasmError).error) {
-            throw new Error((response as WasmError).error);
+        if ((response as WasmError).Error) {
+            throw new Error((response as WasmError).Error);
         }
         return response as CloneCertificateResponse;
     }
 
     public static ExportCertificate(params: ExportCertificateParameters): ExportCertificateResponse {
         const response = JSON.parse(this.wasm.ExportCertificate(JSON.stringify(params)));
-        if ((response as WasmError).error) {
-            throw new Error((response as WasmError).error);
+        if ((response as WasmError).Error) {
+            throw new Error((response as WasmError).Error);
         }
         return response as ExportCertificateResponse;
     }
@@ -116,8 +116,8 @@ export class Wasm {
 
     public static ZipFiles(params: ZipFilesParameters): ZipFilesResponse {
         const response = JSON.parse(this.wasm.ZipFiles(JSON.stringify(params)));
-        if ((response as WasmError).error) {
-            throw new Error((response as WasmError).error);
+        if ((response as WasmError).Error) {
+            throw new Error((response as WasmError).Error);
         }
         return response as ZipFilesResponse;
     }
