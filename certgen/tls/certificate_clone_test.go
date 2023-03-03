@@ -3,7 +3,7 @@ package tls_test
 import (
 	"testing"
 
-	"github.com/tlsinspector/certificate-factory/certgen/tls"
+	"github.com/tlsinspector/certbox/certgen/tls"
 )
 
 const rsa2048cert = `-----BEGIN CERTIFICATE-----

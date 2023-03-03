@@ -6,7 +6,7 @@ import (
 	"encoding/base64"
 	"strings"
 
-	"github.com/tlsinspector/certificate-factory/certgen/tls"
+	"github.com/tlsinspector/certbox/certgen/tls"
 )
 
 const (

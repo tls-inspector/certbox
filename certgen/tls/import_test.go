@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/tlsinspector/certificate-factory/certgen/tls"
+	"github.com/tlsinspector/certbox/certgen/tls"
 )
 
 // The certificate and keys used in this file are from the known-bad 'Superfish' certificate.

@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/tlsinspector/certificate-factory/certgen/tls"
+	"github.com/tlsinspector/certbox/certgen/tls"
 )
 
 type ImportCertificateParameters struct {
