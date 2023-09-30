@@ -5,6 +5,14 @@ updates:
     schedule:
       interval: "weekly"
   - package-ecosystem: "gomod"
-    directory: "/"
+    directory: "/src/certbox"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "npm"
+    directory: "/src/desktop"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "npm"
+    directory: "/src/web"
     schedule:
       interval: "weekly"
