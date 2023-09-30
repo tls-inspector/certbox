@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-VERSION=$(git describe)
+VERSION=$(git describe 2>/dev/null || echo "unknown")
 BUILD_ID=$(date -u +"%Y%m%d%H%M%S")
 
 if [[ $(uname) == 'Linux' ]]; then
