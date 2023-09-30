@@ -58,7 +58,7 @@ export class Updater {
     }
 
     private static async getRelease(): Promise<GithubRelease> {
-        const response = await fetch('https://api.github.com/repos/tls-inspector/certbox-desktop/releases/latest', {
+        const response = await fetch('https://api.github.com/repos/tls-inspector/certbox/releases/latest', {
             headers: {
                 'User-Agent': IPC.packageName + '@' + IPC.packageVersion,
                 Accept: 'application/vnd.github.v3+json',
