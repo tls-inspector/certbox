@@ -1,0 +1,29 @@
+.about {
+    display: flex;
+    flex-direction: row;
+
+    .image {
+        width: 50%;
+
+        img {
+            width: 100%;
+        }
+    }
+
+    .contents {
+        margin-left: 1rem;
+
+        h1 {
+            margin: 0;
+        }
+
+        a {
+            color: #0080ff;
+            text-decoration: underline;
+
+            &:hover {
+                cursor: pointer;
+            }
+        }
+    }
+}

@@ -1,10 +1,10 @@
 version: 2
 updates:
-  - package-ecosystem: "gomod"
-    directory: "/certgen"
+  - package-ecosystem: "github-actions"
+    directory: "/"
     schedule:
       interval: "weekly"
-  - package-ecosystem: "npm"
+  - package-ecosystem: "gomod"
     directory: "/"
     schedule:
       interval: "weekly"

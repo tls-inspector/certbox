@@ -1,0 +1,15 @@
+.checkbox-forest {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 5px;
+}
+
+.eku-custom {
+    margin-top: 0.25rem;
+
+    span {
+        margin-left: 0.25rem;
+        font-size: small;
+        font-style: italic;
+    }
+}

@@ -1,0 +1,34 @@
+name: Web
+
+on:
+  push:
+    paths:
+      - '.github/workflows/web.yml'
+  pull_request:
+    paths:
+      - 'src/web/**'
+      - 'src/frontend/**'
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: "1.21"
+
+      - name: Build certgen
+        run: ./wasm.sh
+        working-directory: src/certbox/cmd/certgen
+
+      - name: Build app
+        run: |
+          npm i
+          npx webpack --config webpack.js --mode production
+        working-directory: src/web

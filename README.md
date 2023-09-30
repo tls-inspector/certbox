@@ -1,33 +1,34 @@
 # CertBox
 
-CertBox is a web-based application for generating X.509 certificates.
+**[Access CertBox Online »](https://web.certbox.io)**  
+**[Download CertBox Desktop »](https://certbox.io/desktop.html)**  
+
+CertBox is a X.509 certificate toolbox on your desktop or in your browser. It allows you to easily generate entire certificate chains, issue certificates from existing roots, clone certificates, and more.
+
+CertBox uses a Golang backend for all cryptographic operations. On the web, this is accessed through a WASM module. On the desktop, this is a companion application.
 
 ## Building
 
-### Requirements
+Requirements:
 
-- Golang (latest)
-- node.js LTS & NPM
+- Golang (most recent version)
+- NodeJS (most recent mainline release)
+- Docker/Podman _(Linux only)_
 
-### Build WebAssembly Module
+### CertBox Desktop
 
-```
-cd certgen
-./build.sh
-```
-
-### Build Web Application
-
-**For Development**
-
-```
-npm i
-npx webpack --config webpack.js
+```bash
+cd src/desktop
+node release.js
 ```
 
-**For Release**
+Packaged executables will be in the `package` directory.
 
+### CertBox Web
+
+```bash
+cd src/web
+node release.js
 ```
-npm i
-NODE_ENV=production npx webpack --config webpack.js --mode production
-```
+
+Compiled web application will be in the `dist` directory.

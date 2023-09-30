@@ -1,0 +1,77 @@
+name: Desktop
+
+on:
+  push:
+    paths:
+      - '.github/workflows/desktop.yml'
+  pull_request:
+    paths:
+      - 'src/desktop/**'
+      - 'src/frontend/**'
+
+permissions:
+  contents: read
+
+jobs:
+  build_linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: "1.21"
+
+      - name: Build certgen
+        run: ./build.sh
+        working-directory: src/certbox/cmd/certgen
+
+      - name: Build app
+        run: |
+          npm i
+          node start_webpack.js --mode production
+          node build.linux.js
+        working-directory: src/desktop
+
+  build_macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: "1.21"
+
+      - name: Build certgen
+        run: ./build.sh
+        working-directory: src/certbox/cmd/certgen
+
+      - name: Build app
+        run: |
+          npm i
+          node start_webpack.js --mode production
+          node build.darwin.js
+        working-directory: src/desktop
+
+  build_windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: "1.21"
+
+      - name: Build certgen
+        run: .\build.cmd
+        working-directory: src\certbox\cmd\certgen
+
+      - name: Build app
+        run: |
+          npm i
+          node start_webpack.js --mode production
+          node build.windows.js
+        working-directory: src\desktop
