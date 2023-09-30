@@ -1,4 +1,4 @@
-FROM registry.fedoraproject.org/fedora:35
+FROM registry.fedoraproject.org/fedora:38
 
 RUN dnf install -y rpm-build curl wget xz tar jq
 
