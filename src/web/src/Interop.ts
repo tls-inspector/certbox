@@ -11,13 +11,15 @@ let passwordCallback: () => Promise<string>;
 
 export const Interop: IInterop = {
     isDesktop: false,
-    init: async function (): Promise<boolean> {
+    init: async function (): Promise<void> {
         const id = Rand.ID();
         await Wasm.Init();
         const pong = Wasm.Ping({
             Nonce: id,
         });
-        return pong.Nonce === id;
+        if (pong.Nonce != id) {
+            throw 'Interop nonce mismatch';
+        }
     },
     showCertificateContextMenu: function (root: boolean): Promise<string> {
         throw new Error('Function not implemented.');

@@ -33,6 +33,8 @@ export const App: React.FC = () => {
     });
     const [InvalidCertificates, setInvalidCertificates] = React.useState<{ [index: number]: string }>({});
     const [NewVersionURL, setNewVersionURL] = React.useState<string>();
+    const [LoadingInterop, SetIsLoadingInterop] = React.useState(true);
+    const [InteropError, SetInteropError] = React.useState(false);
     const [IsLoading, setIsLoading] = React.useState(false);
 
     const importedCertificate = (certificate: Certificate) => {
@@ -59,7 +61,12 @@ export const App: React.FC = () => {
     };
 
     React.useEffect(() => {
-        Interop.init();
+        Interop.init().then(() => {
+            SetIsLoadingInterop(false);
+        }).catch(() => {
+            SetInteropError(true);
+            SetIsLoadingInterop(false);
+        });
 
         if (Interop.isDesktop) {
             Interop.checkForUpdates().then(newerVersionURL => {
@@ -270,6 +277,28 @@ export const App: React.FC = () => {
             <Link url={NewVersionURL}>Click here to view</Link>
         </div>);
     };
+
+    if (LoadingInterop) {
+        return (
+            <Icon.Label icon={<Icon.Spinner pulse/>} label="Loading..." />
+        );
+    }
+
+    if (InteropError) {
+        return (
+            <div id="main">
+                <div className="dialog">
+                    <div className="dialog-title">
+                        Certbox Error
+                    </div>
+                    <div className="dialog-body">
+                        <p>Certbox uses a WebAssembly (WASM) module to provide cryptographic functions. Some browsers, notably Microsoft Edge, may disable WASM as part of their enhanced security setting.</p>
+                        <p>Please ensure that WebAssembly is not disabled for <u>web.certbox.io</u>.</p>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     return (<ErrorBoundary>
         <div id="main">

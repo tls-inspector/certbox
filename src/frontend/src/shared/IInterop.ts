@@ -3,7 +3,7 @@ import { Options } from './options';
 
 export interface IInterop {
     isDesktop: boolean
-    init: () => Promise<boolean>
+    init: () => Promise<void>
     showCertificateContextMenu: (root: boolean) => Promise<string>
     importCertificate: () => void
     onImportedCertificate: (callback: (certificate: Certificate) => void) => void

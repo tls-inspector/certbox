@@ -70,8 +70,8 @@ export const Interop: IInterop = {
         return Promise.resolve(null);
     },
     importCertificate: function (): void { },
-    init: function (): Promise<boolean> {
-        return Promise.resolve(true);
+    init: function (): Promise<void> {
+        return Promise.resolve();
     },
     saveFile: function (): void { }
 };
