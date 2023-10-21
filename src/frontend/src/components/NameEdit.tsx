@@ -55,7 +55,7 @@ export const NameEdit: React.FC<NameEditProps> = (props: NameEditProps) => {
             <Input label="Organization" defaultValue={Name.Organization} onChange={onChangeOrganization} />
             <Input label="City" defaultValue={Name.City} onChange={onChangeCity} />
             <Input label="Province" defaultValue={Name.Province} onChange={onChangeProvince} />
-            <Input label="Country" defaultValue={Name.Country} onChange={onChangeCountry} />
+            <Input label="Country" defaultValue={Name.Country} onChange={onChangeCountry} helpText='Two-letter country code (ISO 3166-1 alpha-2)' />
             <Input label="Common Name" defaultValue={Name.CommonName} onChange={onChangeCommonName} required />
         </Section>
     );

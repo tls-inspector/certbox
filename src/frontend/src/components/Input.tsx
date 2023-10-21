@@ -11,6 +11,7 @@ interface InputProps {
     disabled?: boolean;
     required?: boolean;
     autofocus?: boolean;
+    helpText?: string;
 }
 export const Input: React.FC<InputProps> = (props: InputProps) => {
     const id = Rand.ID();
@@ -25,11 +26,20 @@ export const Input: React.FC<InputProps> = (props: InputProps) => {
         return (<TextInput id={id} placeholder={props.placeholder} defaultValue={props.defaultValue} type={props.type} onChange={props.onChange} disabled={props.disabled} required={props.required} autofocus={props.autofocus}/>);
     };
 
+    const helpText = () => {
+        if (!props.helpText) {
+            return null;
+        }
+
+        return (<span className="help-text">{ props.helpText }</span>);
+    };
+
     return (
         <div className="input">
             <label htmlFor={id}>
                 <span className="label">{ props.label }{ requiredFlag }</span>
                 { input() }
+                { helpText() }
             </label>
         </div>
     );

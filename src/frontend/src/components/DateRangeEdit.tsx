@@ -37,10 +37,10 @@ export const DateRangeEdit: React.FC<DateRangeEditProps> = (props: DateRangeEdit
         <Section title="Date Range">
             <div className="date-range">
                 <div className="not-before">
-                    <Input label="Not Before" type="date" defaultValue={NotBefore} onChange={onChangeNotBefore} required />
+                    <Input label="Not Before" type="date" defaultValue={NotBefore} onChange={onChangeNotBefore} helpText='00:00:00 UTC' required />
                 </div>
                 <div className="not-after">
-                    <Input label="Not After" type="date" defaultValue={NotAfter} onChange={onChangeNotAfter} required />
+                    <Input label="Not After" type="date" defaultValue={NotAfter} onChange={onChangeNotAfter} helpText='00:00:00 UTC' required />
                 </div>
             </div>
         </Section>
