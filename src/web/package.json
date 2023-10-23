@@ -24,7 +24,7 @@
     "copy-webpack-plugin": "^11.0.0",
     "csp-html-webpack-plugin": "^5.1.0",
     "css-loader": "^6.8.1",
-    "eslint": "^8.51.0",
+    "eslint": "^8.52.0",
     "eslint-plugin-react": "^7.33.2",
     "eslint-webpack-plugin": "^4.0.1",
     "html-loader": "^4.2.0",
