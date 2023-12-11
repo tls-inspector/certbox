@@ -28,7 +28,7 @@
     "eslint-plugin-react": "^7.33.2",
     "eslint-webpack-plugin": "^4.0.1",
     "html-loader": "^4.2.0",
-    "html-webpack-plugin": "^5.5.3",
+    "html-webpack-plugin": "^5.5.4",
     "keyv": "^4.5.4",
     "prop-types": "^15.8.1",
     "sass": "^1.69.5",
