@@ -213,18 +213,26 @@ func (u KeyUsage) extendedUsage() []x509.ExtKeyUsage {
 func (u KeyUsage) customExtendedUsage() ([]asn1.ObjectIdentifier, error) {
 	usage := make([]asn1.ObjectIdentifier, len(u.CustomEKUs))
 	for i, oidStr := range u.CustomEKUs {
-		parts := strings.Split(oidStr, ".")
-		val := make([]int, len(parts))
-		for j, part := range parts {
-			id, err := strconv.Atoi(part)
-			if err != nil {
-				return nil, fmt.Errorf("invalid custom eku at index %d", i)
-			}
-			val[j] = id
+		oid, err := parseOid(oidStr)
+		if err != nil {
+			return nil, fmt.Errorf("invalid custom eku at index %d", i)
 		}
-		usage[i] = asn1.ObjectIdentifier(val)
+		usage[i] = oid
 	}
 	return usage, nil
+}
+
+func parseOid(s string) (asn1.ObjectIdentifier, error) {
+	parts := strings.Split(s, ".")
+	val := make([]int, len(parts))
+	for i, part := range parts {
+		id, err := strconv.Atoi(part)
+		if err != nil {
+			return nil, fmt.Errorf("invalid asn oid: %s", s)
+		}
+		val[i] = id
+	}
+	return asn1.ObjectIdentifier(val), nil
 }
 
 func x509KeyUsageToInternal(usage x509.KeyUsage, eku []x509.ExtKeyUsage) (u KeyUsage) {
@@ -279,6 +287,14 @@ const (
 	SignatureAlgorithmSHA512 = "sha512"
 )
 
+// Certificate extension
+type Extension struct {
+	OID string
+	// Value must be a type supported by the go asn1 package.
+	// Most primitive types + time are supported.
+	Value any
+}
+
 // CertificateRequest describes a certificate request
 type CertificateRequest struct {
 	KeyType                string
@@ -289,6 +305,7 @@ type CertificateRequest struct {
 	Usage                  KeyUsage
 	IsCertificateAuthority bool
 	StatusProviders        StatusProviders
+	Extensions             []Extension
 }
 
 // StatusProviders describes providers for certificate status
@@ -404,6 +421,18 @@ func (c Certificate) Clone() CertificateRequest {
 	}
 	csr.Usage = x509KeyUsageToInternal(x.KeyUsage, x.ExtKeyUsage)
 	csr.IsCertificateAuthority = x.IsCA
+
+	for _, ext := range x.Extensions {
+		oid := ext.Id.String()
+		var object any
+		if _, err := asn1.Unmarshal(ext.Value, &object); err != nil {
+			panic(fmt.Sprintf("Unsupported extension value for oid %s: %s", oid, err.Error()))
+		}
+		csr.Extensions = append(csr.Extensions, Extension{
+			OID:   oid,
+			Value: object,
+		})
+	}
 
 	return csr
 }
@@ -530,6 +559,24 @@ func GenerateCertificate(request CertificateRequest, issuer *Certificate) (*Cert
 		UnknownExtKeyUsage:    customEku,
 		SignatureAlgorithm:    signatureAlgorithm,
 		IsCA:                  request.IsCertificateAuthority,
+	}
+
+	for _, extension := range request.Extensions {
+		oid, err := parseOid(extension.OID)
+		if err != nil {
+			return nil, fmt.Errorf("invalid extension oid: %s", extension.OID)
+		}
+
+		value, err := asn1.Marshal(extension.Value)
+		if err != nil {
+			return nil, fmt.Errorf("invalid extension value for %s: %s", extension.OID, err.Error())
+		}
+
+		tpl.ExtraExtensions = append(tpl.ExtraExtensions, pkix.Extension{
+			Id:       oid,
+			Critical: false,
+			Value:    value,
+		})
 	}
 
 	if issuer != nil {

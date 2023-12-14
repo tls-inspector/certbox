@@ -3,10 +3,12 @@ package tls_test
 import (
 	"bytes"
 	"crypto/x509"
+	"encoding/asn1"
 	"encoding/hex"
 	"math/rand"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/tls-inspector/certbox/tls"
 )
@@ -488,5 +490,116 @@ func TestKeyUsage(t *testing.T) {
 	}
 	if !hasExtKeyUsageOCSPSigning {
 		t.Errorf("Certificate does not have extended OCSPSigning usage")
+	}
+}
+
+func TestExtensions(t *testing.T) {
+	t.Parallel()
+
+	stringExtensionId := "1.2.3.4.5.6"
+	stringExtensionValue := "hello"
+	numberExtensionId := "1.2.3.4.5.7"
+	numberExtensionValue := 1337
+	timeExtensionId := "1.2.3.4.5.8"
+	timeExtensionValue := time.Now().UTC()
+
+	cert, err := tls.GenerateCertificate(tls.CertificateRequest{
+		KeyType: tls.KeyTypeECDSA_256,
+		Subject: tls.Name{
+			Organization: "example.com",
+			City:         "Vancouver",
+			Province:     "British Columbia",
+			Country:      "CA",
+			CommonName:   "example.com Example Root",
+		},
+		Validity: tls.DateRange{
+			NotBefore: "2001-01-01",
+			NotAfter:  "2002-01-01",
+		},
+		Extensions: []tls.Extension{
+			{
+				OID:   stringExtensionId,
+				Value: stringExtensionValue,
+			},
+			{
+				OID:   numberExtensionId,
+				Value: numberExtensionValue,
+			},
+			{
+				OID:   timeExtensionId,
+				Value: timeExtensionValue,
+			},
+		},
+		IsCertificateAuthority: true,
+		SignatureAlgorithm:     tls.SignatureAlgorithmSHA256,
+	}, nil)
+	if err != nil {
+		t.Fatalf("Error generating certificate: %s", err.Error())
+	}
+
+	data, err := hex.DecodeString(cert.CertificateData)
+	if err != nil {
+		t.Fatalf("Error decoding certificate bytes: %s", err.Error())
+	}
+
+	x, err := x509.ParseCertificate(data)
+	if err != nil {
+		t.Fatalf("Error parsing X.509 data: %s", err.Error())
+	}
+
+	if len(x.Extensions) == 0 {
+		t.Fatalf("No extensions on certificate")
+	}
+
+	foundStringExtension := false
+	foundNumberExtension := false
+	foundTimeExtension := false
+
+	for _, extension := range x.Extensions {
+		if extension.Id.String() == stringExtensionId {
+			var value string
+			if _, err := asn1.Unmarshal(extension.Value, &value); err != nil {
+				t.Fatalf("Error decoding string value: %s", err.Error())
+			}
+			if value != stringExtensionValue {
+				t.Fatalf("String extension value does not match %v != %v", value, stringExtensionValue)
+				continue
+			}
+			foundStringExtension = true
+		}
+
+		if extension.Id.String() == numberExtensionId {
+			var value int
+			if _, err := asn1.Unmarshal(extension.Value, &value); err != nil {
+				t.Fatalf("Error decoding int value: %s", err.Error())
+			}
+			if value != numberExtensionValue {
+				t.Fatalf("Number extension value does not match %v != %v", value, numberExtensionValue)
+				continue
+			}
+			foundNumberExtension = true
+		}
+
+		if extension.Id.String() == timeExtensionId {
+			var value time.Time
+			if _, err := asn1.Unmarshal(extension.Value, &value); err != nil {
+				t.Fatalf("Error decoding time value: %s", err.Error())
+			}
+			if value.Unix() != timeExtensionValue.Unix() { // Use unix since millisecond precision is lost
+				t.Fatalf("Time extension value does not match %v != %v", value, timeExtensionValue)
+				continue
+			}
+			foundTimeExtension = true
+		}
+	}
+
+	if !foundStringExtension {
+		t.Fatalf("Did not find string extension")
+	}
+	if !foundNumberExtension {
+		t.Fatalf("Did not find number extension")
+	}
+	if !foundTimeExtension {
+		t.Fatalf("Did not find time extension")
 	}
 }

@@ -30,6 +30,12 @@ export interface CertificateRequest {
     Usage: KeyUsage;
     IsCertificateAuthority?: boolean;
     Imported?: boolean;
+    Extensions?: CertificateExtension[];
+}
+
+export interface CertificateExtension {
+    OID: string;
+    Value: unknown;
 }
 
 export function BlankCertificateRequest(isRoot: boolean): CertificateRequest {

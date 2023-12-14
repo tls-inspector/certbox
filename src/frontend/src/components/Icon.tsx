@@ -11,6 +11,7 @@ import {
     faFileExport,
     faFileImport,
     faInfoCircle,
+    faPencil,
     faPlusCircle,
     faSpinner,
     faTrash,
@@ -54,6 +55,7 @@ export namespace Icon {
     export const FileExport: React.FC<IconProps> = (props: IconProps) => EIcon({ icon: faFileExport, options: props });
     export const FileImport: React.FC<IconProps> = (props: IconProps) => EIcon({ icon: faFileImport, options: props });
     export const InfoCircle: React.FC<IconProps> = (props: IconProps) => EIcon({ icon: faInfoCircle, options: props });
+    export const Pencil: React.FC<IconProps> = (props: IconProps) => EIcon({ icon: faPencil, options: props });
     export const PlusCircle: React.FC<IconProps> = (props: IconProps) => EIcon({ icon: faPlusCircle, options: props });
     export const Spinner: React.FC<IconProps> = (props: IconProps) => EIcon({ icon: faSpinner, options: props });
     export const Trash: React.FC<IconProps> = (props: IconProps) => EIcon({ icon: faTrash, options: props });

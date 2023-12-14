@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { CertificateRequest, DateRange, Name, KeyUsage, AlternateName, KeyType, SignatureAlgorithm } from '../shared/types';
+import { CertificateRequest, DateRange, Name, KeyUsage, AlternateName, KeyType, SignatureAlgorithm, CertificateExtension } from '../shared/types';
 import { AlternateNamesEdit } from './AlternateNameEdit';
 import { DateRangeEdit } from './DateRangeEdit';
 import { KeyUsageEdit } from './KeyUsageEdit';
@@ -7,6 +7,7 @@ import { NameEdit } from './NameEdit';
 import { Button } from './Button';
 import { KeyTypeEdit } from './KeyTypeEdit';
 import '../css/CertificateEdit.scss';
+import { ExtensionsEdit } from './ExtensionsEdit';
 
 interface CertificateEditProps {
     defaultValue: CertificateRequest;
@@ -62,6 +63,13 @@ export const CertificateEdit: React.FC<CertificateEditProps> = (props: Certifica
         });
     };
 
+    const onChangeExtensions = (Extensions: CertificateExtension[]) => {
+        setRequest(request => {
+            request.Extensions = Extensions;
+            return { ...request };
+        });
+    };
+
     if (!Request) {
         return null;
     }
@@ -83,6 +91,7 @@ export const CertificateEdit: React.FC<CertificateEditProps> = (props: Certifica
             <KeyTypeEdit defaultKeyType={Request.KeyType} onChangeKeyType={onChangeKeyType} defaultSignatureAlgorithm={Request.SignatureAlgorithm} onChangeSignatureAlgorithm={onChangeSignatureAlgorithm} />
             <AlternateNamesEdit defaultValue={Request.AlternateNames} onChange={onChangeAlternateNames} />
             <KeyUsageEdit defaultValue={Request.Usage} onChange={onChangeKeyUsage} />
+            <ExtensionsEdit defaultValue={Request.Extensions || []} onChange={onChangeExtensions} />
         </div>
     );
 };
