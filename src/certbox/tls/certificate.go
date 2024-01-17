@@ -295,6 +295,15 @@ type Extension struct {
 	Value any
 }
 
+var (
+	oidExtensionSubjectKeyId     = asn1.ObjectIdentifier([]int{2, 5, 29, 14})
+	oidExtensionKeyUsage         = asn1.ObjectIdentifier([]int{2, 5, 29, 15})
+	oidExtensionExtendedKeyUsage = asn1.ObjectIdentifier([]int{2, 5, 29, 37})
+	oidExtensionAuthorityKeyId   = asn1.ObjectIdentifier([]int{2, 5, 29, 35})
+	oidExtensionBasicConstraints = asn1.ObjectIdentifier([]int{2, 5, 29, 19})
+	oidExtensionSubjectAltName   = asn1.ObjectIdentifier([]int{2, 5, 29, 17})
+)
+
 // CertificateRequest describes a certificate request
 type CertificateRequest struct {
 	KeyType                string

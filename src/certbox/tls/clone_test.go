@@ -2,6 +2,7 @@ package tls_test
 
 import (
 	"testing"
+	"time"
 
 	"github.com/tls-inspector/certbox/tls"
 )
@@ -154,6 +155,23 @@ SGVsbG8gV29ybGQh
 -----END RSA PRIVATE KEY-----
 `
 
+const certWithExt = `-----BEGIN CERTIFICATE-----
+MIICVTCCAfugAwIBAgIQFHBvz1osyN2gmpoNLfaSSjAKBggqhkjOPQQDAjB1MQsw
+CQYDVQQGEwJDQTEZMBcGA1UECBMQQnJpdGlzaCBDb2x1bWJpYTESMBAGA1UEBxMJ
+VmFuY291dmVyMRQwEgYDVQQKEwtleGFtcGxlLmNvbTEhMB8GA1UEAxMYZXhhbXBs
+ZS5jb20gRXhhbXBsZSBSb290MB4XDTAxMDEwMTAwMDAwMFoXDTAyMDEwMTAwMDAw
+MFowdTELMAkGA1UEBhMCQ0ExGTAXBgNVBAgTEEJyaXRpc2ggQ29sdW1iaWExEjAQ
+BgNVBAcTCVZhbmNvdXZlcjEUMBIGA1UEChMLZXhhbXBsZS5jb20xITAfBgNVBAMT
+GGV4YW1wbGUuY29tIEV4YW1wbGUgUm9vdDBZMBMGByqGSM49AgEGCCqGSM49AwEH
+A0IABE5DIgW4C3jBFASnjAqU7aYeqK5ZaJdplzKbTfMUIFszhuFHrKw6/VAK6cLp
+uQgnije5zXWtJmaCEyPItGC5MBmjbTBrMA8GA1UdEwEB/wQFMAMBAf8wHQYDVR0O
+BBYEFB4q7t8PK8X9gn9GwdsbtGOPxwljMBAGBSoDBAUGBAcTBWhlbGxvMA0GBSoD
+BAUHBAQCAgU5MBgGBSoDBAUIBA8XDTIzMTEyOTIwMzQwMFowCgYIKoZIzj0EAwID
+SAAwRQIgJ5RwAHrklbBDCEqetbVdILxem899JdLpI2taBhGtWdwCIQCnMsOMD87n
+9ovPJpGVUxbEYWtiAS1EiZsRGsHF5AVIgw==
+-----END CERTIFICATE-----
+`
+
 func TestCloneRSA2048(t *testing.T) {
 	t.Parallel()
 
@@ -221,5 +239,73 @@ func TestCloneECDSA384(t *testing.T) {
 	request := certificate.Clone()
 	if request.KeyType != tls.KeyTypeECDSA_384 {
 		t.Errorf("Incorrect key type. Expected '%s' got '%s'", tls.KeyTypeECDSA_384, request.KeyType)
+	}
+}
+
+func TestCloneCertWithExt(t *testing.T) {
+	t.Parallel()
+
+	certificate, err := tls.ImportPEM([]byte(certWithExt), []byte(fakeKey), "")
+	if err != nil {
+		t.Fatalf("Error importing key: %s", err.Error())
+	}
+
+	request := certificate.Clone()
+	foundStringExtension := false
+	foundNumberExtension := false
+	foundTimeExtension := false
+
+	for _, extension := range request.Extensions {
+		if extension.OID == stringExtensionId {
+			var value string
+			value, isStr := extension.Value.(string)
+			if !isStr {
+				t.Fatalf("Incorrect value type for string extensions")
+				continue
+			}
+			if value != stringExtensionValue {
+				t.Fatalf("String extension value does not match %v != %v", value, stringExtensionValue)
+				continue
+			}
+			foundStringExtension = true
+		}
+
+		if extension.OID == numberExtensionId {
+			var value int64
+			value, isStr := extension.Value.(int64)
+			if !isStr {
+				t.Fatalf("Incorrect value type for number extensions. Expected int")
+				continue
+			}
+			if int(value) != numberExtensionValue {
+				t.Fatalf("Number extension value does not match %v != %v", value, numberExtensionValue)
+				continue
+			}
+			foundNumberExtension = true
+		}
+
+		if extension.OID == timeExtensionId {
+			var value time.Time
+			value, isStr := extension.Value.(time.Time)
+			if !isStr {
+				t.Fatalf("Incorrect value type for time extensions")
+				continue
+			}
+			if value.Unix() != timeExtensionValue.Unix() { // Use unix since millisecond precision is lost
+				t.Fatalf("Time extension value does not match %v != %v", value, timeExtensionValue)
+				continue
+			}
+			foundTimeExtension = true
+		}
+	}
+
+	if !foundStringExtension {
+		t.Fatalf("Did not find string extension")
+	}
+	if !foundNumberExtension {
+		t.Fatalf("Did not find number extension")
+	}
+	if !foundTimeExtension {
+		t.Fatalf("Did not find time extension")
 	}
 }

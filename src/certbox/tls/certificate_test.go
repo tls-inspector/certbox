@@ -13,6 +13,13 @@ import (
 	"github.com/tls-inspector/certbox/tls"
 )
 
+var stringExtensionId = "1.2.3.4.5.6"
+var stringExtensionValue = "hello"
+var numberExtensionId = "1.2.3.4.5.7"
+var numberExtensionValue = 1337
+var timeExtensionId = "1.2.3.4.5.8"
+var timeExtensionValue = time.Date(2023, 11, 29, 20, 34, 00, 00, time.UTC)
+
 func generateCertificateChain() (*tls.Certificate, *tls.Certificate, error) {
 	var keyType string
 	if rand.Int()%2 == 0 {
@@ -495,13 +502,6 @@ func TestKeyUsage(t *testing.T) {
 
 func TestExtensions(t *testing.T) {
 	t.Parallel()
-
-	stringExtensionId := "1.2.3.4.5.6"
-	stringExtensionValue := "hello"
-	numberExtensionId := "1.2.3.4.5.7"
-	numberExtensionValue := 1337
-	timeExtensionId := "1.2.3.4.5.8"
-	timeExtensionValue := time.Now().UTC()
 
 	cert, err := tls.GenerateCertificate(tls.CertificateRequest{
 		KeyType: tls.KeyTypeECDSA_256,

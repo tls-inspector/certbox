@@ -4,6 +4,7 @@ import (
 	"crypto/ecdsa"
 	"crypto/rsa"
 	"crypto/x509"
+	"crypto/x509/pkix"
 	"encoding/asn1"
 	"fmt"
 	"time"
@@ -88,11 +89,36 @@ func (c Certificate) Clone() CertificateRequest {
 	csr.IsCertificateAuthority = x.IsCA
 
 	for _, ext := range x.Extensions {
+		if isKnownExtensionOid(ext) {
+			continue
+		}
+
 		oid := ext.Id.String()
 		var object any
 		if _, err := asn1.Unmarshal(ext.Value, &object); err != nil {
 			panic(fmt.Sprintf("Unsupported extension value for oid %s: %s", oid, err.Error()))
 		}
+
+		isValidType := false
+		if _, isStr := object.(string); isStr {
+			isValidType = true
+		}
+		if _, isNumber := object.(int64); isNumber {
+			isValidType = true
+		}
+		if _, isNumber := object.(uint64); isNumber {
+			isValidType = true
+		}
+		if _, isNumber := object.(float64); isNumber {
+			isValidType = true
+		}
+		if _, isTime := object.(time.Time); isTime {
+			isValidType = true
+		}
+		if !isValidType {
+			continue
+		}
+
 		csr.Extensions = append(csr.Extensions, Extension{
 			OID:   oid,
 			Value: object,
@@ -100,4 +126,13 @@ func (c Certificate) Clone() CertificateRequest {
 	}
 
 	return csr
+}
+
+func isKnownExtensionOid(ext pkix.Extension) bool {
+	return ext.Id.Equal(oidExtensionSubjectKeyId) ||
+		ext.Id.Equal(oidExtensionKeyUsage) ||
+		ext.Id.Equal(oidExtensionExtendedKeyUsage) ||
+		ext.Id.Equal(oidExtensionAuthorityKeyId) ||
+		ext.Id.Equal(oidExtensionBasicConstraints) ||
+		ext.Id.Equal(oidExtensionSubjectAltName)
 }
