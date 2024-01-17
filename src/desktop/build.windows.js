@@ -1,16 +1,21 @@
 const windowsInstaller = require('electron-winstaller');
 const packager = require('./build.package.js');
 
-(async function main() {
-    await packager.app('win32', 'x64');
+async function build(arch) {
+    await packager.app('win32', arch);
     await windowsInstaller.createWindowsInstaller({
-        appDirectory: 'package\\Certbox-win32-x64',
+        appDirectory: 'package\\Certbox-win32-' + arch,
         outputDirectory: 'package\\artifacts',
         title: 'Certbox',
-        iconUrl: 'https://raw.githubusercontent.com/tls-inspector/certbox-desktop/develop/icons/certbox.ico',
+        iconUrl: 'https://raw.githubusercontent.com/tls-inspector/certbox/main/src/frontend/src/icons/certbox.ico',
         setupIcon: 'src\\icons\\certbox.ico',
         exe: 'certbox.exe',
-        setupExe: 'certbox_windows_x64.exe',
+        setupExe: 'certbox_windows_' + arch + '.exe',
         noMsi: true
     });
+}
+
+(async function main() {
+    await build('x64');
+    await build('arm64');
 })();
