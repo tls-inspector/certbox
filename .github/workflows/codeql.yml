@@ -13,7 +13,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a393 #pin v4
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 #pin v4.1.1
 
       - name: Initialize CodeQL
         uses: github/codeql-action/init@e8893c57a1f3a2b659b6b55564fdfdbbd2982911 #pin v3.24.0
