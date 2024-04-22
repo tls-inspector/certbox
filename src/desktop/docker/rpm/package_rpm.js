@@ -1,13 +1,14 @@
 const os = require('os');
 const installer = require('electron-installer-redhat');
 
-const arch = os.arch() === 'arm64' ? 'arm64' : 'x64';
+const nodeArch = os.arch() === 'arm64' ? 'arm64' : 'x64';
+const rpmArch = os.arch() === 'arm64' ? 'aarch64' : 'x86_64';
 
 const options = {
-    src: '/build_root/package/Certbox-linux-' + arch + '/',
+    src: '/build_root/package/Certbox-linux-' + nodeArch + '/',
     dest: '/build_root/package/artifacts/',
-    arch: arch,
-    icon: '/build_root/package/Certbox-linux-' + arch + '/resources/app/dist/assets/img/certbox.png'
+    arch: rpmArch,
+    icon: '/build_root/package/Certbox-linux-' + nodeArch + '/resources/app/dist/assets/img/certbox.png'
 }
 
 async function main(options) {
