@@ -8,7 +8,7 @@ const node = (os.platform() === 'win32' ? 'node.exe' : 'node');
 var exec = (file, args, wd) => {
     return new Promise((resolve, reject) => {
         console.log(file, args, wd);
-        const ex = spawn(file, args, { stdio: 'inherit', env: process.env, cwd: wd });
+        const ex = spawn(file, args, { stdio: 'inherit', env: process.env, cwd: wd, shell: true });
         ex.on('close', code => {
             if (code === 0) {
                 resolve();

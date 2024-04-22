@@ -34,7 +34,7 @@ var startWebpack = (configFile) => {
 
         console.log(file, args);
 
-        const electron = spawn(file, args, { stdio: 'inherit', env: env });
+        const electron = spawn(file, args, { stdio: 'inherit', env: env, shell: true });
         electron.on('close', () => {
             resolve();
         });
