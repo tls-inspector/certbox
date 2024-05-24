@@ -13,14 +13,14 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@1d96c772d19495a3b5c517cd2bc0cb401ea0529f #pin v4.1.3
+      - uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 #pin v4.1.6
 
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@c7f9125735019aa87cfc361530512d50ea439c71 #pin v3.25.1
+        uses: github/codeql-action/init@9fdb3e49720b44c48891d036bb502feb25684276 #pin v3.25.6
         with:
           languages: go
 
       - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@c7f9125735019aa87cfc361530512d50ea439c71 #pin v3.25.1
+        uses: github/codeql-action/analyze@9fdb3e49720b44c48891d036bb502feb25684276 #pin v3.25.6
         with:
           category: "/language:go"
