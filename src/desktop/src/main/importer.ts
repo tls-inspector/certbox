@@ -1,6 +1,6 @@
 import { CertificateRequest } from '../shared/types';
 import { Dialog } from './dialog';
-import fs = require('fs');
+import * as fs from 'fs';
 import { certgen } from './certgen';
 
 export class Importer {

@@ -1,6 +1,6 @@
-import path = require('path');
-import os = require('os');
-import fs = require('fs');
+import * as path from 'path';
+import * as os from 'os';
+import * as fs from 'fs';
 import { App } from './app';
 import { log } from './log';
 

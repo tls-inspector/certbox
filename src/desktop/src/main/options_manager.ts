@@ -1,7 +1,7 @@
 import { app } from 'electron';
 import * as manifest from '../../package.json';
-import path = require('path');
-import fs = require('fs');
+import * as path from 'path';
+import * as fs from 'fs';
 import { Options, GetDefaultOptions } from '../shared/options';
 
 export class OptionsManager {

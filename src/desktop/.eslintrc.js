@@ -38,7 +38,8 @@ module.exports = {
             rules: {
                 'quotes': ['error', 'single'],
                 'brace-style': ['error', '1tbs'],
-                'no-var': 'error'
+                'no-var': 'error',
+                'react/prop-types': 'off'
             }
         },
         {

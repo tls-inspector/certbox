@@ -5,14 +5,14 @@ export class Validator {
         let notBefore: number;
         try {
             notBefore = Date.parse(request.Validity.NotBefore);
-        } catch (err) {
+        } catch {
             return 'Not Before date is invalid';
         }
 
         let notAfter: number;
         try {
             notAfter = Date.parse(request.Validity.NotAfter);
-        } catch (err) {
+        } catch {
             return 'Not After date is invalid';
         }
 
