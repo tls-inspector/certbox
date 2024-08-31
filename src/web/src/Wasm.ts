@@ -18,6 +18,10 @@ export interface GenerateCertificatesParameters {
     ImportedRoot?: Certificate;
 }
 
+export interface ExportCSRParameters {
+    Request: CertificateRequest;
+}
+
 export interface ExportCertificateParameters {
     Certificates: Certificate[];
     Format: string;
@@ -37,6 +41,7 @@ interface WasmBridge {
     ImportRootCertificate: (data: number[], password: string) => string;
     CloneCertificate: (data: number[]) => string;
     GenerateCertificates: (...args: string[]) => string;
+    ExportCSR: (...args: string[]) => string;
     ExportCertificates: (...args: string[]) => string;
     GetVersion: (...args: string[]) => string;
     GetVersions: (...args: string[]) => string;
@@ -95,6 +100,14 @@ export class Wasm {
             throw new Error((response as WasmError).Error);
         }
         return response as Certificate[];
+    }
+
+    public static ExportCSR(params: ExportCSRParameters): ExportedFile[] {
+        const response = JSON.parse(this.wasm.ExportCSR(JSON.stringify(params)));
+        if ((response as WasmError).Error) {
+            throw new Error((response as WasmError).Error);
+        }
+        return response as ExportedFile[];
     }
 
     public static ExportCertificates(params: ExportCertificateParameters): ExportedFile[] {

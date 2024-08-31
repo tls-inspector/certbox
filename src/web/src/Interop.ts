@@ -56,6 +56,12 @@ export const Interop: IInterop = {
             ImportedRoot: importedRoot
         }));
     },
+    exportCSR: function (request: CertificateRequest): Promise<ExportedFile[]> {
+        const csrFiles = Wasm.ExportCSR({ Request: request });
+        const zipFile = Wasm.ZipFiles({ Files: csrFiles });
+        Interop.saveFile(zipFile.File);
+        return Promise.resolve(csrFiles);
+    },
     exportCertificates: function (certificates: Certificate[], format: ExportFormatType, password: string): Promise<ExportedFile[]> {
         return Promise.resolve(Wasm.ExportCertificates({
             Certificates: certificates,

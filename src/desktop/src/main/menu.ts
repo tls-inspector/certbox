@@ -142,10 +142,13 @@ export class Menu {
         return new Promise(resolve => {
             const template: Electron.MenuItemConstructorOptions[] = [
                 {
-                    label: 'Duplicate',
+                    label: 'Export Certificate Signing Request (CSR)',
                     click: () => {
-                        resolve('duplicate');
+                        resolve('export_csr');
                     }
+                },
+                {
+                    type: 'separator',
                 },
                 {
                     label: 'Clone Existing Certificate',
@@ -154,7 +157,18 @@ export class Menu {
                     }
                 },
                 {
+                    label: 'Duplicate',
+                    role: 'copy',
+                    click: () => {
+                        resolve('duplicate');
+                    }
+                },
+                {
+                    type: 'separator',
+                },
+                {
                     label: 'Delete',
+                    role: 'delete',
                     click: () => {
                         resolve('delete');
                     }

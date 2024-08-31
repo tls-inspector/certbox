@@ -9,6 +9,7 @@ export interface IInterop {
     onImportedCertificate: (callback: (certificate: Certificate) => void) => void
     onGetImportPassword: (callback: () => Promise<string>) => void
     generateCertificates: (requests: CertificateRequest[], importedRoot: Certificate) => Promise<Certificate[]>
+    exportCSR: (request: CertificateRequest) => Promise<ExportedFile[]>
     exportCertificates: (certificates: Certificate[], format: ExportFormatType, password: string) => Promise<ExportedFile[]>
     zipFiles: (files: ExportedFile[]) => Promise<ExportedFile>
     saveFile: (file: ExportedFile) => void

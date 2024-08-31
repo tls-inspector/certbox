@@ -7,6 +7,7 @@ enum CertGenActions {
     ImportRootCertificate = 'IMPORT_ROOT_CERTIFICATE',
     CloneCertificate = 'CLONE_CERTIFICATE',
     GenerateCertificates = 'GENERATE_CERTIFICATES',
+    ExportCSR = 'EXPORT_CSR',
     ExportCertificates = 'EXPORT_CERTIFICATES',
     GetVersion = 'GET_VERSION',
     ConvertPEMtoDER = 'CONVERT_PEM_DER',
@@ -106,6 +107,18 @@ export class certgen {
         log.debug('Generating certificate', config);
         return this.runCertgen(CertGenActions.GenerateCertificates, config).then(output => {
             return JSON.parse(output) as Certificate[];
+        });
+    }
+
+    public static async exportCSR(exportDir: string, request: CertificateRequest): Promise<string[]> {
+        const config = {
+            ExportDir: exportDir,
+            Request: request,
+        };
+
+        log.debug('Exporting csr', config);
+        return this.runCertgen(CertGenActions.ExportCSR, config).then(output => {
+            return JSON.parse(output) as string[];
         });
     }
 

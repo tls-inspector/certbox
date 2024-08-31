@@ -41,6 +41,29 @@ func ExportPEM(certificate *Certificate) ([]byte, []byte, error) {
 	return certPEM, keyPEM, nil
 }
 
+// ExportCSR will generate PEM files for the certificate and private key.
+// Returns the certificate data, key data, and optional error.
+func ExportCSR(certificate *CertificateRequest) ([]byte, []byte, error) {
+	csr, pkey, err := GenerateCSR(*certificate)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	csrPEM := pem.EncodeToMemory(&pem.Block{Type: "CERTIFICATE REQUEST", Bytes: csr})
+
+	blockType := ""
+	if certificate.KeyType[0] == 'r' {
+		blockType = "RSA PRIVATE KEY"
+	} else if certificate.KeyType[0] == 'e' {
+		blockType = "EC PRIVATE KEY"
+	} else {
+		blockType = "PRIVATE KEY"
+	}
+	keyPEM := pem.EncodeToMemory(&pem.Block{Type: blockType, Bytes: pkey})
+
+	return csrPEM, keyPEM, nil
+}
+
 // ExportDER will generate DER files for the certificate and private key.
 // Returns the certificate data, key data, and optional error.
 func ExportDER(certificate *Certificate) ([]byte, []byte, error) {

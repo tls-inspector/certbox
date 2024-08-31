@@ -9,6 +9,7 @@ const (
 	ActionImportRootCertificate = "IMPORT_ROOT_CERTIFICATE"
 	ActionCloneCertificate      = "CLONE_CERTIFICATE"
 	ActionGenerateCertificates  = "GENERATE_CERTIFICATES"
+	ActionExportCSR             = "EXPORT_CSR"
 	ActionExportCertificates    = "EXPORT_CERTIFICATES"
 	ActionGetVersion            = "GET_VERSION"
 	ActionConvertPEMtoDER       = "CONVERT_PEM_DER"

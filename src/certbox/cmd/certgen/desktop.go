@@ -35,6 +35,8 @@ func main() {
 		cloneCertificate(parameterBytes)
 	case ActionGenerateCertificates:
 		generateCertificate(parameterBytes)
+	case ActionExportCSR:
+		exportCSR(parameterBytes)
 	case ActionExportCertificates:
 		exportCertificates(parameterBytes)
 	case ActionGetVersion:
@@ -98,6 +100,32 @@ func generateCertificate(parameterBytes []byte) {
 	}
 
 	json.NewEncoder(os.Stdout).Encode(certificates)
+}
+
+type ExportCSRParameters struct {
+	certbox.ExportCSRParameters
+	ExportDir string
+}
+
+func exportCSR(parameterBytes []byte) {
+	parameters := ExportCSRParameters{}
+	if err := json.Unmarshal(parameterBytes, &parameters); err != nil {
+		fatalError(err)
+	}
+
+	files, err := certbox.ExportCSR(parameters.ExportCSRParameters)
+	if err != nil {
+		fatalError(err)
+	}
+
+	fileNames := make([]string, len(files))
+
+	for i, file := range files {
+		os.WriteFile(path.Join(parameters.ExportDir, file.Name), file.Data, 0644)
+		fileNames[i] = file.Name
+	}
+
+	json.NewEncoder(os.Stdout).Encode(fileNames)
 }
 
 type ExportCertificatesParameters struct {

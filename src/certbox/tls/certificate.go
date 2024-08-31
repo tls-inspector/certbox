@@ -374,12 +374,11 @@ func (c Certificate) PKey() crypto.PrivateKey {
 	return k
 }
 
-// GenerateCertificate will generate a certificate from the given certificate request
-func GenerateCertificate(request CertificateRequest, issuer *Certificate) (*Certificate, error) {
+func (r *CertificateRequest) generate() (*x509.Certificate, crypto.PrivateKey, error) {
 	var pKey crypto.PrivateKey
 	var err error
 
-	switch request.KeyType {
+	switch r.KeyType {
 	case KeyTypeRSA_2048:
 		pKey, err = generateRSAKey(2048)
 	case KeyTypeRSA_4096:
@@ -391,42 +390,27 @@ func GenerateCertificate(request CertificateRequest, issuer *Certificate) (*Cert
 	case KeyTypeECDSA_384:
 		pKey, err = generateECDSAKey(elliptic.P384())
 	default:
-		return nil, fmt.Errorf("invalid key type")
+		return nil, nil, fmt.Errorf("invalid key type")
 	}
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 	pub := pKey.(crypto.Signer).Public()
 	serial, err := randomSerialNumber()
 	if err != nil {
-		return nil, err
-	}
-
-	pKeyBytes, err := x509.MarshalPKCS8PrivateKey(pKey)
-	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	publicKeyBytes, err := x509.MarshalPKIXPublicKey(pub)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 	subjectKeyId := sha1.Sum(publicKeyBytes)
 
-	var authorityKeyId [20]byte
-	if issuer != nil {
-		issuerPublicKey := issuer.PKey().(crypto.Signer).Public()
-		issuerPublicKeyBytes, err := x509.MarshalPKIXPublicKey(issuerPublicKey)
-		if err != nil {
-			return nil, err
-		}
-		authorityKeyId = sha1.Sum(issuerPublicKeyBytes)
-	}
-
 	var signatureAlgorithm x509.SignatureAlgorithm
-	switch request.KeyType {
+	switch r.KeyType {
 	case KeyTypeRSA_2048, KeyTypeRSA_4096, KeyTypeRSA_8192:
-		switch request.SignatureAlgorithm {
+		switch r.SignatureAlgorithm {
 		case SignatureAlgorithmSHA256:
 			signatureAlgorithm = x509.SHA256WithRSA
 		case SignatureAlgorithmSHA384:
@@ -434,10 +418,10 @@ func GenerateCertificate(request CertificateRequest, issuer *Certificate) (*Cert
 		case SignatureAlgorithmSHA512:
 			signatureAlgorithm = x509.SHA512WithRSA
 		default:
-			return nil, fmt.Errorf("invalid signature algorithm")
+			return nil, nil, fmt.Errorf("invalid signature algorithm")
 		}
 	case KeyTypeECDSA_256, KeyTypeECDSA_384:
-		switch request.SignatureAlgorithm {
+		switch r.SignatureAlgorithm {
 		case SignatureAlgorithmSHA256:
 			signatureAlgorithm = x509.ECDSAWithSHA256
 		case SignatureAlgorithmSHA384:
@@ -445,47 +429,39 @@ func GenerateCertificate(request CertificateRequest, issuer *Certificate) (*Cert
 		case SignatureAlgorithmSHA512:
 			signatureAlgorithm = x509.ECDSAWithSHA512
 		default:
-			return nil, fmt.Errorf("invalid signature algorithm")
+			return nil, nil, fmt.Errorf("invalid signature algorithm")
 		}
 	}
 
-	certificate := Certificate{
-		Serial:               serial.String(),
-		CertificateAuthority: issuer == nil,
-		KeyData:              hex.EncodeToString(pKeyBytes),
-		Subject:              request.Subject,
-	}
-
-	customEku, err := request.Usage.customExtendedUsage()
+	customEku, err := r.Usage.customExtendedUsage()
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
-	notBefore, notAfter := request.Validity.mustDates()
+	notBefore, notAfter := r.Validity.mustDates()
 
 	tpl := &x509.Certificate{
 		SerialNumber:          serial,
-		Subject:               request.Subject.pkix(),
+		Subject:               r.Subject.pkix(),
 		NotBefore:             notBefore,
 		NotAfter:              notAfter,
-		KeyUsage:              request.Usage.usage(),
+		KeyUsage:              r.Usage.usage(),
 		BasicConstraintsValid: true,
 		SubjectKeyId:          subjectKeyId[:],
-		ExtKeyUsage:           request.Usage.extendedUsage(),
+		ExtKeyUsage:           r.Usage.extendedUsage(),
 		UnknownExtKeyUsage:    customEku,
 		SignatureAlgorithm:    signatureAlgorithm,
-		IsCA:                  request.IsCertificateAuthority,
 	}
 
-	for _, extension := range request.Extensions {
+	for _, extension := range r.Extensions {
 		oid, err := parseOid(extension.OID)
 		if err != nil {
-			return nil, fmt.Errorf("invalid extension oid: %s", extension.OID)
+			return nil, nil, fmt.Errorf("invalid extension oid: %s", extension.OID)
 		}
 
 		value, err := asn1.Marshal(extension.Value)
 		if err != nil {
-			return nil, fmt.Errorf("invalid extension value for %s: %s", extension.OID, err.Error())
+			return nil, nil, fmt.Errorf("invalid extension value for %s: %s", extension.OID, err.Error())
 		}
 
 		tpl.ExtraExtensions = append(tpl.ExtraExtensions, pkix.Extension{
@@ -495,20 +471,15 @@ func GenerateCertificate(request CertificateRequest, issuer *Certificate) (*Cert
 		})
 	}
 
-	if issuer != nil {
-		tpl.Issuer = issuer.X509().Subject
-		tpl.AuthorityKeyId = authorityKeyId[:]
-	}
-
-	for _, name := range request.AlternateNames {
+	for _, name := range r.AlternateNames {
 		if len(name.Value) == 0 {
-			return nil, fmt.Errorf("empty alternate name value")
+			return nil, nil, fmt.Errorf("empty alternate name value")
 		}
 
 		switch name.Type {
 		case AlternateNameTypeDNS:
 			if name.Value == " " {
-				return nil, fmt.Errorf("invalid dns name value")
+				return nil, nil, fmt.Errorf("invalid dns name value")
 			}
 			tpl.DNSNames = append(tpl.DNSNames, name.Value)
 		case AlternateNameTypeEmail:
@@ -516,18 +487,89 @@ func GenerateCertificate(request CertificateRequest, issuer *Certificate) (*Cert
 		case AlternateNameTypeIP:
 			ip := net.ParseIP(name.Value)
 			if ip == nil {
-				return nil, fmt.Errorf("invalid ip address %s", name.Value)
+				return nil, nil, fmt.Errorf("invalid ip address %s", name.Value)
 			}
 			tpl.IPAddresses = append(tpl.IPAddresses, ip)
 		case AlternateNameTypeURI:
 			u, err := url.Parse(name.Value)
 			if err != nil {
-				return nil, err
+				return nil, nil, err
 			}
 			tpl.URIs = append(tpl.URIs, u)
 		default:
-			return nil, fmt.Errorf("unknown alternate name type")
+			return nil, nil, fmt.Errorf("unknown alternate name type")
 		}
+	}
+
+	return tpl, pKey, nil
+}
+
+// GenerateCSR will generate a certificate signing request and private key from the given certificate request
+// and return a DER encoded CSR and PKCS8 private key
+func GenerateCSR(request CertificateRequest) ([]byte, []byte, error) {
+	tpl, pKey, err := request.generate()
+	if err != nil {
+		return nil, nil, err
+	}
+
+	r := &x509.CertificateRequest{
+		Version:            tpl.Version,
+		Signature:          tpl.Signature,
+		SignatureAlgorithm: tpl.SignatureAlgorithm,
+		PublicKeyAlgorithm: tpl.PublicKeyAlgorithm,
+		PublicKey:          tpl.PublicKey,
+		Subject:            tpl.Subject,
+		Extensions:         tpl.Extensions,
+		ExtraExtensions:    tpl.ExtraExtensions,
+		DNSNames:           tpl.DNSNames,
+		EmailAddresses:     tpl.EmailAddresses,
+		IPAddresses:        tpl.IPAddresses,
+		URIs:               tpl.URIs,
+	}
+
+	pKeyBytes, err := x509.MarshalPKCS8PrivateKey(pKey)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	csr, err := x509.CreateCertificateRequest(rand.Reader, r, pKey)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return csr, pKeyBytes, nil
+}
+
+// GenerateCertificate will generate a certificate from the given certificate request
+func GenerateCertificate(request CertificateRequest, issuer *Certificate) (*Certificate, error) {
+	tpl, pKey, err := request.generate()
+	if err != nil {
+		return nil, err
+	}
+
+	pub := pKey.(crypto.Signer).Public()
+	pKeyBytes, err := x509.MarshalPKCS8PrivateKey(pKey)
+	if err != nil {
+		return nil, err
+	}
+
+	if issuer != nil {
+		issuerPublicKey := issuer.PKey().(crypto.Signer).Public()
+		issuerPublicKeyBytes, err := x509.MarshalPKIXPublicKey(issuerPublicKey)
+		if err != nil {
+			return nil, err
+		}
+		authorityKeyId := sha1.Sum(issuerPublicKeyBytes)
+
+		tpl.Issuer = issuer.X509().Subject
+		tpl.AuthorityKeyId = authorityKeyId[:]
+	}
+
+	certificate := Certificate{
+		Serial:               tpl.SerialNumber.String(),
+		CertificateAuthority: issuer == nil,
+		KeyData:              hex.EncodeToString(pKeyBytes),
+		Subject:              request.Subject,
 	}
 
 	var certBytes []byte

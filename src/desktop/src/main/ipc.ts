@@ -20,12 +20,31 @@ ipcMain.handle('generate_certificate', async (event, args) => {
     return certgen.generateCertificates(requests, importedRoot);
 });
 
+ipcMain.handle('export_csr', async (event, args) => {
+    const request = args[0] as CertificateRequest;
+
+    try {
+        return Exporter.ExportCSR(browserWindowFromEvent(event.sender), request).then(fileNames => {
+            if (!fileNames) {
+                return [];
+            }
+
+            return fileNames.map(name => {
+                return { Name: name };
+            });
+        });
+    } catch (err) {
+        new Dialog(browserWindowFromEvent(event.sender)).showErrorDialog('Error exporting CSR',
+            'An error occurred while generating your CSR', JSON.stringify(err, Object.getOwnPropertyNames(err)));
+    }
+});
+
 ipcMain.handle('export_certificates', async (event, args) => {
     const certificates = args[0] as Certificate[];
     const format = args[1] as ExportFormatType;
     const password = args[2] as string;
     try {
-        return Exporter.Export(browserWindowFromEvent(event.sender), certificates, format, password);
+        return Exporter.ExportCertificate(browserWindowFromEvent(event.sender), certificates, format, password);
     } catch (err) {
         new Dialog(browserWindowFromEvent(event.sender)).showErrorDialog('Error exporting certificates',
             'An error occurred while generating your certificates', JSON.stringify(err, Object.getOwnPropertyNames(err)));

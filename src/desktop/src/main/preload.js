@@ -6,6 +6,7 @@ contextBridge.exposeInMainWorld('IPC', {
     packageName: manifest.name,
     onImportedCertificate: (cb) => ipcRenderer.on('did_import_certificate', cb),
     generateCertificate: (requests, importedRoot) => ipcRenderer.invoke('generate_certificate', [requests, importedRoot]),
+    exportCSR: (request) => ipcRenderer.invoke('export_csr', [request]),
     exportCertificates: (certificates, format, password) => ipcRenderer.invoke('export_certificates', [certificates, format, password]),
     showCertificateContextMenu: (isRoot) => ipcRenderer.invoke('show_certificate_context_menu', [isRoot]),
     cloneCertificate: () => ipcRenderer.invoke('clone_certificate'),

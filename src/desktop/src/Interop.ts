@@ -24,6 +24,9 @@ export const Interop: IInterop = {
     generateCertificates: function (requests: CertificateRequest[], importedRoot: Certificate): Promise<Certificate[]> {
         return IPC.generateCertificate(requests, importedRoot);
     },
+    exportCSR: function (request: CertificateRequest): Promise<ExportedFile[]> {
+        return IPC.exportCSR(request);
+    },
     exportCertificates: function (certificates: Certificate[], format: ExportFormatType, password: string): Promise<ExportedFile[]> {
         return IPC.exportCertificates(certificates, format, password).then(() => {
             return [];

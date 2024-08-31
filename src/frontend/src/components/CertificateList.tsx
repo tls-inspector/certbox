@@ -12,7 +12,7 @@ interface CertificateListProps {
     invalidCertificates: {[index:number]:string};
     onClick: (idx: number) => void;
     onShowContextMenu: (idx: number) => void;
-    menuAction: (idx: number, action: 'import' | 'duplicate' | 'clone' | 'delete') => void;
+    menuAction: (idx: number, action: 'import' | 'export_csr' | 'duplicate' | 'clone' | 'delete') => void;
 }
 export const CertificateList: React.FC<CertificateListProps> = (props: CertificateListProps) => {
     const didClick = (idx: number) => {
@@ -28,7 +28,7 @@ export const CertificateList: React.FC<CertificateListProps> = (props: Certifica
     };
 
     const menuAction = (idx: number) => {
-        return (action: 'import' | 'duplicate' | 'clone' | 'delete') => {
+        return (action: 'import' | 'export_csr' | 'duplicate' | 'clone' | 'delete') => {
             props.menuAction(idx, action);
         };
     };
@@ -50,7 +50,7 @@ interface CertificateListItemProps {
     invalidReason?: string;
     onClick: () => void;
     onShowContextMenu: () => void;
-    menuAction: (action: 'import' | 'duplicate' | 'clone' | 'delete') => void;
+    menuAction: (action: 'import' | 'export_csr' | 'duplicate' | 'clone' | 'delete') => void;
 }
 const CertificateListItem: React.FC<CertificateListItemProps> = (props: CertificateListItemProps) => {
     if (!props.certificate) {

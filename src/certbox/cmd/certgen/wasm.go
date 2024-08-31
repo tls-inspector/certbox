@@ -30,6 +30,7 @@ func main() {
 	js.Global().Set("ImportRootCertificate", jsImportRootCertificate())
 	js.Global().Set("CloneCertificate", jsCloneCertificate())
 	js.Global().Set("GenerateCertificates", jsGenerateCertificates())
+	js.Global().Set("ExportCSR", jsExportCSR())
 	js.Global().Set("ExportCertificates", jsExportCertificates())
 	js.Global().Set("ZipFiles", jsZipFiles())
 	<-make(chan bool)
@@ -128,6 +129,30 @@ func jsGenerateCertificates() js.Func {
 			return WasmError(err)
 		}
 		response, err := certbox.GenerateCertificates(params)
+		if err != nil {
+			return WasmError(err)
+		}
+		data, err := json.Marshal(response)
+		if err != nil {
+			return WasmError(err)
+		}
+		return string(data)
+	})
+}
+
+func jsExportCSR() js.Func {
+	return js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+		fmt.Printf("invoke: ExportCSR()\n")
+
+		defer func() {
+			recover()
+		}()
+
+		params := certbox.ExportCSRParameters{}
+		if err := json.Unmarshal([]byte(args[0].String()), &params); err != nil {
+			return WasmError(err)
+		}
+		response, err := certbox.ExportCSR(params)
 		if err != nil {
 			return WasmError(err)
 		}

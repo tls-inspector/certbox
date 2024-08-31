@@ -63,7 +63,8 @@ export const App: React.FC = () => {
     React.useEffect(() => {
         Interop.init().then(() => {
             SetIsLoadingInterop(false);
-        }).catch(() => {
+        }).catch(err => {
+            console.error('WASM/Interop error', err);
             SetInteropError(true);
             SetIsLoadingInterop(false);
         });
@@ -160,6 +161,11 @@ export const App: React.FC = () => {
                             return { ...state };
                         });
                         break;
+                    case 'export_csr':
+                        Interop.exportCSR(certificate).then(files => {
+                            console.log(files);
+                        });
+                        break;
                     case 'clone':
                         Interop.cloneCertificate().then(request => {
                             if (!request) {
@@ -186,10 +192,13 @@ export const App: React.FC = () => {
     };
 
     // web only
-    const certificateMenuAction = (idx: number, action: 'import' | 'duplicate' | 'clone' | 'delete') => {
+    const certificateMenuAction = (idx: number, action: 'import' | 'export_csr' | 'duplicate' | 'clone' | 'delete') => {
         switch (action) {
             case 'import':
                 Interop.importCertificate();
+                break;
+            case 'export_csr':
+                Interop.exportCSR(State.certificates[idx]);
                 break;
             case 'duplicate':
                 setState(state => {

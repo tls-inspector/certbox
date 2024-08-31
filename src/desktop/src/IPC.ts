@@ -1,4 +1,4 @@
-import { Certificate, CertificateRequest, ExportFormatType, RuntimeVersions } from './shared/types';
+import { Certificate, CertificateRequest, ExportedFile, ExportFormatType, RuntimeVersions } from './shared/types';
 import { Options } from './shared/options';
 
 interface PreloadBridge {
@@ -6,6 +6,7 @@ interface PreloadBridge {
     packageName: string;
     onImportedCertificate: (cb: (event: Electron.IpcRendererEvent, ...args: unknown[]) => void) => void
     generateCertificate: (requests: CertificateRequest[], importedRoot: Certificate) => Promise<Certificate[]>
+    exportCSR: (request: CertificateRequest) => Promise<ExportedFile[]>
     exportCertificates: (certificates: Certificate[], format: ExportFormatType, password: string) => Promise<boolean>
     showCertificateContextMenu: (isRoot: boolean) => Promise<'delete' | 'duplicate'>
     cloneCertificate: () => Promise<CertificateRequest>
@@ -53,6 +54,14 @@ export class IPC {
      */
     public static generateCertificate(requests: CertificateRequest[], importedRoot: Certificate): Promise<Certificate[]> {
         return IPC.preload.generateCertificate(requests, importedRoot);
+    }
+
+    /**
+     * Export a certificate request and private key
+     * @param request The certificate request
+     */
+    public static exportCSR(request: CertificateRequest): Promise<ExportedFile[]> {
+        return IPC.preload.exportCSR(request);
     }
 
     /**
