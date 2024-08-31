@@ -1,4 +1,4 @@
-FROM docker.io/library/ubuntu:22.04
+FROM docker.io/library/ubuntu:24.04
 
 RUN apt-get update && \
     apt-get install -y wget curl tar xz-utils fakeroot dpkg jq
