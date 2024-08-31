@@ -1,6 +1,6 @@
 {
   "name": "certbox",
-  "version": "1.8.2",
+  "version": "1.9.0",
   "description": "A desktop application to generate certificates",
   "main": "dist/main.js",
   "author": "Ian Spence <ian@ecn.io>",
