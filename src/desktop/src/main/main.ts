@@ -6,7 +6,7 @@ import { App } from './app';
 import { OptionsManager } from './options_manager';
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
-if (require('electron-squirrel-startup')) { // eslint-disable-line global-require, @typescript-eslint/no-require-imports
+if (require('electron-squirrel-startup')) { // eslint-disable-line @typescript-eslint/no-require-imports
     console.info('Quitting because of squirrel');
     app.quit();
 }

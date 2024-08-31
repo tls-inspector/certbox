@@ -49,8 +49,7 @@ export class Wasm {
     public static Init(): Promise<void> {
         return new Promise((resolve, reject) => {
             try {
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                const go = new (window as any).Go();
+                const go = new (window as any).Go(); // eslint-disable-line @typescript-eslint/no-explicit-any
                 WebAssembly.instantiateStreaming(fetch('wasm/certgen.wasm'), go.importObject).then((result) => {
                     go.run(result.instance);
                     const nonce = 'wasm-' + Rand.ID();

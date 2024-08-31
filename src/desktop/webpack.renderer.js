@@ -37,7 +37,8 @@ module.exports = {
             ]
         }),
         new ESLintPlugin({
-            extensions: ['.ts', '.tsx']
+            extensions: ['.ts', '.tsx'],
+            configType: 'flat',
         }),
     ],
     target: 'electron-renderer',

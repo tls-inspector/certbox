@@ -22,7 +22,8 @@ module.exports = {
             ]
         }),
         new ESLintPlugin({
-            extensions: ['.js', '.ts']
+            extensions: ['.js', '.ts'],
+            configType: 'flat',
         }),
     ],
     module: {

@@ -1,4 +1,5 @@
 const path = require('path');
+const ESLintPlugin = require('eslint-webpack-plugin');
 
 let devtool = 'source-map';
 if (process.env.NODE_ENV === 'production') {
@@ -25,6 +26,12 @@ module.exports = {
     resolve: {
         extensions: ['.js']
     },
+    plugins: [
+        new ESLintPlugin({
+            extensions: ['.js'],
+            configType: 'flat',
+        }),
+    ],
     target: 'electron-preload',
     output: {
         path: path.resolve(__dirname, 'dist'),
