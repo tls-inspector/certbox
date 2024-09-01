@@ -38,7 +38,7 @@ jobs:
       - uses: actions/upload-artifact@50769540e7f4bd5e21e526ee35c689e35e0d6874 #pin v4.4.0
         with:
           name: certbox_linux
-          path: package/artifacts/certbox_linux_*.tar.gz
+          path: src/desktop/package/artifacts/certbox_linux_*.tar.gz
           compression-level: 0
 
   build_macos:
@@ -66,7 +66,7 @@ jobs:
       - uses: actions/upload-artifact@50769540e7f4bd5e21e526ee35c689e35e0d6874 #pin v4.4.0
         with:
           name: certbox_macos
-          path: package/artifacts/certbox_macOS_*.dmg
+          path: src/desktop/package/artifacts/certbox_macOS_*.dmg
           compression-level: 0
 
   build_windows:
@@ -94,5 +94,5 @@ jobs:
       - uses: actions/upload-artifact@50769540e7f4bd5e21e526ee35c689e35e0d6874 #pin v4.4.0
         with:
           name: certbox_windows
-          path: package/artifacts/certbox_windows_*.exe
+          path: src/desktop/package/artifacts/certbox_windows_*.exe
           compression-level: 0

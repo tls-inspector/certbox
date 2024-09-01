@@ -563,6 +563,8 @@ func GenerateCertificate(request CertificateRequest, issuer *Certificate) (*Cert
 
 		tpl.Issuer = issuer.X509().Subject
 		tpl.AuthorityKeyId = authorityKeyId[:]
+	} else {
+		tpl.IsCA = true
 	}
 
 	certificate := Certificate{
