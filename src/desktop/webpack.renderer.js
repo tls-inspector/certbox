@@ -24,7 +24,7 @@ module.exports = {
     },
     plugins: [
         new HtmlWebpackPlugin({
-            template: 'src/html/index.' + sourceType + '.html'
+            template: 'src/html/index.html'
         }),
         new CspHtmlWebpackPlugin({
             'script-src': []
@@ -32,8 +32,6 @@ module.exports = {
         new CopyPlugin({
             patterns: [
                 { from: 'src/icons/certbox.png', to: 'assets/img/' },
-                { from: 'node_modules/react/umd/react.' + sourceType + '.js', to: 'assets/js/' },
-                { from: 'node_modules/react-dom/umd/react-dom.' + sourceType + '.js', to: 'assets/js/' },
             ]
         }),
         new ESLintPlugin({

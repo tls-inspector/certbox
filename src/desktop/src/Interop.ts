@@ -29,7 +29,7 @@ export const Interop: IInterop = {
     },
     exportCertificates: function (certificates: Certificate[], format: ExportFormatType, password: string): Promise<ExportedFile[]> {
         return IPC.exportCertificates(certificates, format, password).then(() => {
-            return [];
+            return <ExportedFile[]>[];
         });
     },
     cloneCertificate: function (): Promise<CertificateRequest> {
