@@ -22,7 +22,7 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
         Interop.fatalError(error, errorInfo);
     }
 
-    render(): JSX.Element {
+    render(): React.ReactNode {
         if (this.state.didCatch) {
             return (<h1>A fatal error ocurred</h1>);
         }

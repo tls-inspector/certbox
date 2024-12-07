@@ -36,7 +36,7 @@ export namespace Icon {
         return (<FontAwesomeIcon className={className} icon={props.icon} pulse={props.options.pulse} spin={props.options.spin} title={props.options.title} />);
     };
 
-    interface LabelProps { icon: JSX.Element; spin?: boolean; label: string | number; }
+    interface LabelProps { icon: React.ReactNode; spin?: boolean; label: string | number; }
     export const Label: React.FC<LabelProps> = (props: LabelProps) => {
         return (
             <span>

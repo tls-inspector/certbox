@@ -2,7 +2,7 @@ import * as React from 'react';
 import '../css/Dialog.scss';
 
 interface GlobalDialogFrameState {
-    dialog?: JSX.Element;
+    dialog?: React.ReactNode;
 }
 
 export class GlobalDialogFrame extends React.Component<unknown, GlobalDialogFrameState> {
@@ -20,7 +20,7 @@ export class GlobalDialogFrame extends React.Component<unknown, GlobalDialogFram
         return this.instance.state.dialog != undefined;
     }
 
-    public static showDialog(dialog: JSX.Element): void {
+    public static showDialog(dialog: React.ReactNode): void {
         this.instance.setState(state => {
             if (state.dialog != undefined) {
                 throw new Error('Refusing to stack dialogs');
@@ -33,7 +33,7 @@ export class GlobalDialogFrame extends React.Component<unknown, GlobalDialogFram
         this.instance.setState({ dialog: undefined });
     }
 
-    render(): JSX.Element {
+    render(): React.ReactNode {
         if (!this.state.dialog) {
             return null;
         }

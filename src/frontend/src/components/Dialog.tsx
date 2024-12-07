@@ -4,12 +4,12 @@ import { Button } from './Button';
 import { GlobalDialogFrame } from './DialogFrame';
 
 interface DialogButton {
-    label: string | JSX.Element;
+    label: string | React.ReactNode;
     onClick?: () => Promise<boolean>;
 }
 
 interface DialogProps {
-    title: string | JSX.Element;
+    title: string | React.ReactNode;
     buttons: DialogButton[];
     children?: React.ReactNode;
 }

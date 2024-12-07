@@ -29,7 +29,7 @@ export const MenuItem: React.FC<MenuItemProps> = (props: MenuItemProps) => {
 };
 
 interface GlobalMenuFrameState {
-    menu?: JSX.Element;
+    menu?: React.ReactNode;
 }
 
 export class GlobalMenuFrame extends React.Component<unknown, GlobalMenuFrameState> {
@@ -47,7 +47,7 @@ export class GlobalMenuFrame extends React.Component<unknown, GlobalMenuFrameSta
         return this.instance.state.menu != undefined;
     }
 
-    public static showMenu(menu: JSX.Element): void {
+    public static showMenu(menu: React.ReactNode): void {
         this.instance.setState(state => {
             if (state.menu != undefined) {
                 throw new Error('Refusing to stack menus');
@@ -64,7 +64,7 @@ export class GlobalMenuFrame extends React.Component<unknown, GlobalMenuFrameSta
         GlobalMenuFrame.instance.setState({ menu: undefined });
     }
 
-    render(): JSX.Element {
+    render(): React.ReactNode {
         if (!this.state.menu) {
             return null;
         }
