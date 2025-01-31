@@ -3,3 +3,7 @@
 > %global _smp_build_ncpus 1
 > %endif
 > 
+27c31
+< cp <%= process.platform === 'darwin' ? '-R' : '-r' %> usr/* %{buildroot}/usr/
+---
+> cp <%= process.platform === 'darwin' ? '-R' : '-r' %> ../usr/. %{buildroot}/usr/
