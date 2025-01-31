@@ -31,6 +31,8 @@ jobs:
       - name: Build app
         run: |
           node release.js
+        env:
+          DOCKER: docker
         working-directory: src/desktop
 
       - uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08 #pin v4.6.0
@@ -59,6 +61,8 @@ jobs:
       - name: Build app
         run: |
           node release.js
+        env:
+          DOCKER: docker
         working-directory: src/desktop
 
       - uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08 #pin v4.6.0
