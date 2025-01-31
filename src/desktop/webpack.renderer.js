@@ -12,7 +12,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 module.exports = {
-    mode: 'development',
+    mode: sourceType,
     devtool: devtool,
     watchOptions: {
         followSymlinks: true
@@ -35,8 +35,8 @@ module.exports = {
             ]
         }),
         new ESLintPlugin({
-            extensions: ['.ts', '.tsx'],
-            configType: 'flat',
+            extensions: ['.ts', '.tsx', '.js', '.jsx'],
+            configType: 'flat'
         }),
     ],
     target: 'electron-renderer',
@@ -53,7 +53,7 @@ module.exports = {
             },
             {
                 test: /\.(woff|woff2)$/,
-                type: 'asset/resource',
+                type: 'asset/inline',
             },
             {
                 enforce: 'pre',
@@ -63,16 +63,18 @@ module.exports = {
             {
                 test: /\.s[ac]ss$/i,
                 use: [
-                    'style-loader',
-                    'css-loader',
-                    'sass-loader',
-                ],
+                    {
+                        loader: 'style-loader'
+                    },
+                    {
+                        loader: 'css-loader'
+                    },
+                    {
+                        loader: 'sass-loader'
+                    }
+                ]
             },
         ]
-    },
-    externals: {
-        'react': 'React',
-        'react-dom': 'ReactDOM',
     },
     output: {
         path: path.resolve(__dirname, 'dist'),

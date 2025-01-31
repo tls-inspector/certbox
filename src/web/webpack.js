@@ -28,7 +28,7 @@ function wasmSha() {
 }
 
 module.exports = {
-    mode: 'development',
+    mode: sourceType,
     devtool: devtool,
     entry: './src/index.tsx',
     resolve: {
@@ -46,8 +46,6 @@ module.exports = {
         new CopyPlugin({
             patterns: [
                 { from: 'src/icons/certbox.png', to: 'certbox.png' },
-                { from: 'node_modules/react/umd/react.' + sourceType + '.js', to: 'assets/js/' },
-                { from: 'node_modules/react-dom/umd/react-dom.' + sourceType + '.js', to: 'assets/js/' },
                 { from: wasmExec, to: 'assets/js' },
                 { from: '../certbox/cmd/certgen/certgen.wasm', to: 'wasm/certgen.wasm' },
             ]
@@ -71,7 +69,7 @@ module.exports = {
             },
             {
                 test: /\.(woff|woff2)$/,
-                type: 'asset/resource',
+                type: 'asset/inline',
             },
             {
                 enforce: 'pre',
@@ -87,10 +85,6 @@ module.exports = {
                 ],
             },
         ]
-    },
-    externals: {
-        'react': 'React',
-        'react-dom': 'ReactDOM',
     },
     output: {
         path: path.resolve(__dirname, 'dist', staticRoot),

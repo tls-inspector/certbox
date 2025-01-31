@@ -32,10 +32,10 @@ function copyFile(src, dst) {
 }
 
 function packageApp(platform, arch) {
-    let packager = require('electron-packager');
+    let packager = require('@electron/packager');
     return packager({
         dir: '.',
-        appCopyright: 'Copyright © Ian Spence 2024',
+        appCopyright: 'Copyright © Ian Spence 2025',
         arch: arch,
         icon: 'src/icons/certbox',
         name: 'Certbox',

@@ -2,12 +2,14 @@ const path = require('path');
 const ESLintPlugin = require('eslint-webpack-plugin');
 
 let devtool = 'source-map';
+let sourceType = 'development';
 if (process.env.NODE_ENV === 'production') {
     devtool = undefined;
+    sourceType = 'production.min';
 }
 
 module.exports = {
-    mode: 'development',
+    mode: sourceType,
     devtool: devtool,
     watchOptions: {
         followSymlinks: true

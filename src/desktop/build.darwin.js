@@ -23,6 +23,7 @@ async function build(arch) {
 
 (async function main() {
     try {
+        await packager.exec('npm', ['i', 'appdmg']);
         await packager.exec('mkdir', ['-p', 'package/artifacts']);
         await build('x64');
         await build('arm64');

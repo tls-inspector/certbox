@@ -50,7 +50,7 @@ var docker = () => {
 
 (async () => {
     await buildCertgen();
-    await exec(npm, ['i'], __dirname);
+    await exec(npm, ['ci', '--omit=optional'], __dirname);
     await exec(node, ['start_webpack.js', '--mode', 'production'], __dirname);
     await package();
     await docker();
