@@ -20,7 +20,7 @@ jobs:
           persist-credentials: false
 
       - name: Set up Go
-        uses: actions/setup-go@41dfa10bad2bb2ae585af6ee5bb4d7d973ad74ed #pin v5.1.0
+        uses: actions/setup-go@f111f3307d8850f501ac008e886eec1fd1932a34 #pin v5.3.0
         with:
           go-version: "stable"
 

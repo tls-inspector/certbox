@@ -13,7 +13,8 @@ permissions:
   contents: read
 
 jobs:
-  build_linux:
+  build_linux_amd64:
+    name: Build Linux AMD64
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 #pin v4.2.2
@@ -21,7 +22,7 @@ jobs:
           persist-credentials: false
 
       - name: Set up Go
-        uses: actions/setup-go@41dfa10bad2bb2ae585af6ee5bb4d7d973ad74ed #pin v5.1.0
+        uses: actions/setup-go@f111f3307d8850f501ac008e886eec1fd1932a34 #pin v5.3.0
         with:
           go-version: "stable"
           cache-dependency-path: src/certbox/go.sum
@@ -37,13 +38,45 @@ jobs:
           node build.linux.js
         working-directory: src/desktop
 
-      - uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882 #pin v4.4.3
+      - uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08 #pin v4.6.0
+        with:
+          name: certbox_linux
+          path: src/desktop/package/artifacts/certbox_linux_*.tar.gz
+          compression-level: 0
+
+  build_linux_arm64:
+    name: Build Linux ARM64
+    runs-on: ubuntu-24.04-arm
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 #pin v4.2.2
+        with:
+          persist-credentials: false
+
+      - name: Set up Go
+        uses: actions/setup-go@f111f3307d8850f501ac008e886eec1fd1932a34 #pin v5.3.0
+        with:
+          go-version: "stable"
+          cache-dependency-path: src/certbox/go.sum
+
+      - name: Build certgen
+        run: ./build.sh
+        working-directory: src/certbox/cmd/certgen
+
+      - name: Build app
+        run: |
+          npm --prefer-offline ci
+          node start_webpack.js --mode production
+          node build.linux.js
+        working-directory: src/desktop
+
+      - uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08 #pin v4.6.0
         with:
           name: certbox_linux
           path: src/desktop/package/artifacts/certbox_linux_*.tar.gz
           compression-level: 0
 
   build_macos:
+    name: Build macOS Universal
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 #pin v4.2.2
@@ -51,7 +84,7 @@ jobs:
           persist-credentials: false
 
       - name: Set up Go
-        uses: actions/setup-go@41dfa10bad2bb2ae585af6ee5bb4d7d973ad74ed #pin v5.1.0
+        uses: actions/setup-go@f111f3307d8850f501ac008e886eec1fd1932a34 #pin v5.3.0
         with:
           go-version: "stable"
           cache-dependency-path: src/certbox/go.sum
@@ -67,13 +100,14 @@ jobs:
           node build.darwin.js
         working-directory: src/desktop
 
-      - uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882 #pin v4.4.3
+      - uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08 #pin v4.6.0
         with:
           name: certbox_macos
           path: src/desktop/package/artifacts/certbox_macOS_*.dmg
           compression-level: 0
 
   build_windows:
+    name: Build Windows AMD64
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 #pin v4.2.2
@@ -81,7 +115,7 @@ jobs:
           persist-credentials: false
 
       - name: Set up Go
-        uses: actions/setup-go@41dfa10bad2bb2ae585af6ee5bb4d7d973ad74ed #pin v5.1.0
+        uses: actions/setup-go@f111f3307d8850f501ac008e886eec1fd1932a34 #pin v5.3.0
         with:
           go-version: "stable"
           cache-dependency-path: src\certbox\go.sum
@@ -97,7 +131,7 @@ jobs:
           node build.windows.js
         working-directory: src\desktop
 
-      - uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882 #pin v4.4.3
+      - uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08 #pin v4.6.0
         with:
           name: certbox_windows
           path: src/desktop/package/artifacts/certbox_windows_*.exe
