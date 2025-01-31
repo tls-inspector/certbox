@@ -6,6 +6,7 @@ on:
       - '.github/workflows/desktop.yml'
   pull_request:
     paths:
+      - 'src/certbox/**'
       - 'src/desktop/**'
       - 'src/frontend/**'
 
@@ -13,8 +14,8 @@ permissions:
   contents: read
 
 jobs:
-  build_linux_amd64:
-    name: Build Linux AMD64
+  build_linux_x64:
+    name: Build Linux x64
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 #pin v4.2.2
@@ -27,21 +28,18 @@ jobs:
           go-version: "stable"
           cache-dependency-path: src/certbox/go.sum
 
-      - name: Build certgen
-        run: ./build.sh
-        working-directory: src/certbox/cmd/certgen
-
       - name: Build app
         run: |
-          npm --prefer-offline ci
-          node start_webpack.js --mode production
-          node build.linux.js
+          node release.js
         working-directory: src/desktop
 
       - uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08 #pin v4.6.0
         with:
-          name: certbox_linux
-          path: src/desktop/package/artifacts/certbox_linux_*.tar.gz
+          name: certbox_linux_x64
+          path: |
+            src/desktop/package/artifacts/certbox_linux_x64*.tar.gz
+            src/desktop/package/artifacts/certbox-*_x64.deb
+            src/desktop/package/artifacts/certbox-*.x86_64.rpm
           compression-level: 0
 
   build_linux_arm64:
@@ -58,21 +56,24 @@ jobs:
           go-version: "stable"
           cache-dependency-path: src/certbox/go.sum
 
-      - name: Build certgen
-        run: ./build.sh
-        working-directory: src/certbox/cmd/certgen
-
       - name: Build app
         run: |
-          npm --prefer-offline ci
-          node start_webpack.js --mode production
-          node build.linux.js
+          node release.js
         working-directory: src/desktop
 
       - uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08 #pin v4.6.0
         with:
-          name: certbox_linux
-          path: src/desktop/package/artifacts/certbox_linux_*.tar.gz
+          name: certbox_linux_arm64
+          path: src/desktop/package/artifacts/certbox_linux_arm64*.tar.gz
+          compression-level: 0
+  
+      - uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08 #pin v4.6.0
+        with:
+          name: certbox_linux_arm64
+          path: |
+            src/desktop/package/artifacts/certbox_linux_arm64*.tar.gz
+            src/desktop/package/artifacts/certbox-*_arm64.deb
+            src/desktop/package/artifacts/certbox-*.aarch64.rpm
           compression-level: 0
 
   build_macos:
@@ -89,25 +90,25 @@ jobs:
           go-version: "stable"
           cache-dependency-path: src/certbox/go.sum
 
-      - name: Build certgen
-        run: ./build.sh
-        working-directory: src/certbox/cmd/certgen
-
       - name: Build app
         run: |
-          npm --prefer-offline ci
-          node start_webpack.js --mode production
-          node build.darwin.js
+          node release.js
         working-directory: src/desktop
 
       - uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08 #pin v4.6.0
         with:
-          name: certbox_macos
-          path: src/desktop/package/artifacts/certbox_macOS_*.dmg
+          name: certbox_macos_x64
+          path: src/desktop/package/artifacts/certbox_macOS_x64.dmg
+          compression-level: 0
+
+      - uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08 #pin v4.6.0
+        with:
+          name: certbox_macos_arm64
+          path: src/desktop/package/artifacts/certbox_macOS_arm64.dmg
           compression-level: 0
 
   build_windows:
-    name: Build Windows AMD64
+    name: Build Windows x64
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 #pin v4.2.2
@@ -120,19 +121,19 @@ jobs:
           go-version: "stable"
           cache-dependency-path: src\certbox\go.sum
 
-      - name: Build certgen
-        run: .\build.cmd
-        working-directory: src\certbox\cmd\certgen
-
       - name: Build app
         run: |
-          npm --prefer-offline ci
-          node start_webpack.js --mode production
-          node build.windows.js
-        working-directory: src\desktop
+          node release.js
+        working-directory: src/desktop
 
       - uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08 #pin v4.6.0
         with:
-          name: certbox_windows
-          path: src/desktop/package/artifacts/certbox_windows_*.exe
+          name: certbox_windows_x64
+          path: src/desktop/package/artifacts/certbox_windows_x64.exe
+          compression-level: 0
+
+      - uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08 #pin v4.6.0
+        with:
+          name: certbox_windows_arm64
+          path: src/desktop/package/artifacts/certbox_windows_arm64.exe
           compression-level: 0

@@ -6,6 +6,7 @@ on:
       - '.github/workflows/web.yml'
   pull_request:
     paths:
+      - 'src/certbox/**'
       - 'src/web/**'
       - 'src/frontend/**'
 
