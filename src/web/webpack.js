@@ -18,7 +18,7 @@ const cacheKey = process.env.CACHE_KEY || crypto.randomBytes(3).toString('hex');
 const staticRoot = production ? (cacheKey + '/') : '';
 
 const goroot = execSync('go env GOROOT').toString().trim();
-const wasmExec = path.join(goroot, 'misc', 'wasm', 'wasm_exec.js');
+const wasmExec = path.join(goroot, 'lib', 'wasm', 'wasm_exec.js');
 
 function wasmSha() {
     const fileBuffer = fs.readFileSync(wasmExec);

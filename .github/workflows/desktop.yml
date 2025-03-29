@@ -23,7 +23,7 @@ jobs:
           persist-credentials: false
 
       - name: Set up Go
-        uses: actions/setup-go@f111f3307d8850f501ac008e886eec1fd1932a34 #pin v5.3.0
+        uses: actions/setup-go@0aaccfd150d50ccaeb58ebd88d36e91967a5f35b #pin v5.4.0
         with:
           go-version: "stable"
           cache-dependency-path: src/certbox/go.sum
@@ -35,7 +35,7 @@ jobs:
           DOCKER: docker
         working-directory: src/desktop
 
-      - uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08 #pin v4.6.0
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 #pin v4.6.2
         with:
           name: certbox_linux_x64
           path: |
@@ -53,7 +53,7 @@ jobs:
           persist-credentials: false
 
       - name: Set up Go
-        uses: actions/setup-go@f111f3307d8850f501ac008e886eec1fd1932a34 #pin v5.3.0
+        uses: actions/setup-go@0aaccfd150d50ccaeb58ebd88d36e91967a5f35b #pin v5.4.0
         with:
           go-version: "stable"
           cache-dependency-path: src/certbox/go.sum
@@ -65,13 +65,13 @@ jobs:
           DOCKER: docker
         working-directory: src/desktop
 
-      - uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08 #pin v4.6.0
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 #pin v4.6.2
         with:
           name: certbox_linux_arm64
           path: src/desktop/package/artifacts/certbox_linux_arm64*.tar.gz
           compression-level: 0
   
-      - uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08 #pin v4.6.0
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 #pin v4.6.2
         with:
           name: certbox_linux_arm64
           path: |
@@ -89,7 +89,7 @@ jobs:
           persist-credentials: false
 
       - name: Set up Go
-        uses: actions/setup-go@f111f3307d8850f501ac008e886eec1fd1932a34 #pin v5.3.0
+        uses: actions/setup-go@0aaccfd150d50ccaeb58ebd88d36e91967a5f35b #pin v5.4.0
         with:
           go-version: "stable"
           cache-dependency-path: src/certbox/go.sum
@@ -99,13 +99,13 @@ jobs:
           node release.js
         working-directory: src/desktop
 
-      - uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08 #pin v4.6.0
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 #pin v4.6.2
         with:
           name: certbox_macos_x64
           path: src/desktop/package/artifacts/certbox_macOS_x64.dmg
           compression-level: 0
 
-      - uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08 #pin v4.6.0
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 #pin v4.6.2
         with:
           name: certbox_macos_arm64
           path: src/desktop/package/artifacts/certbox_macOS_arm64.dmg
@@ -120,7 +120,7 @@ jobs:
           persist-credentials: false
 
       - name: Set up Go
-        uses: actions/setup-go@f111f3307d8850f501ac008e886eec1fd1932a34 #pin v5.3.0
+        uses: actions/setup-go@0aaccfd150d50ccaeb58ebd88d36e91967a5f35b #pin v5.4.0
         with:
           go-version: "stable"
           cache-dependency-path: src\certbox\go.sum
@@ -130,13 +130,13 @@ jobs:
           node release.js
         working-directory: src/desktop
 
-      - uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08 #pin v4.6.0
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 #pin v4.6.2
         with:
           name: certbox_windows_x64
           path: src/desktop/package/artifacts/certbox_windows_x64.exe
           compression-level: 0
 
-      - uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08 #pin v4.6.0
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 #pin v4.6.2
         with:
           name: certbox_windows_arm64
           path: src/desktop/package/artifacts/certbox_windows_arm64.exe
