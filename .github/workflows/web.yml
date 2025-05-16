@@ -4,8 +4,12 @@ on:
   push:
     paths:
       - '.github/workflows/web.yml'
+      - 'src/certbox/**'
+      - 'src/web/**'
+      - 'src/frontend/**'
   pull_request:
     paths:
+      - '.github/workflows/web.yml'
       - 'src/certbox/**'
       - 'src/web/**'
       - 'src/frontend/**'

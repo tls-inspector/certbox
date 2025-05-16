@@ -4,8 +4,10 @@ on:
   push:
     paths:
       - '.github/workflows/go.yml'
+      - 'src/certbox/**'
   pull_request:
     paths:
+      - '.github/workflows/go.yml'
       - 'src/certbox/**'
 
 permissions:
