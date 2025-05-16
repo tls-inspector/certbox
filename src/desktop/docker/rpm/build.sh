@@ -18,4 +18,4 @@ cp -r "../../package/Certbox-linux-${ARCH}" build_root/package
 ${DOCKER_CMD} run --rm --user root -v $(readlink -f build_root):/build_root:z certificate_factory_rh_build:latest
 
 cp build_root/package/artifacts/*.rpm .
-rm -rf build_root
+rm -rf build_root || true
