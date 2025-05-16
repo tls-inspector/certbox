@@ -68,12 +68,6 @@ jobs:
         env:
           DOCKER: docker
         working-directory: src/desktop
-
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 #pin v4.6.2
-        with:
-          name: certbox_linux_arm64
-          path: src/desktop/package/artifacts/certbox_linux_arm64*.tar.gz
-          compression-level: 0
   
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 #pin v4.6.2
         with:
@@ -116,7 +110,7 @@ jobs:
           compression-level: 0
 
   build_windows:
-    name: Build Windows x64
+    name: Build Windows Universal
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 #pin v4.2.2
