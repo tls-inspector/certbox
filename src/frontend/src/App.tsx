@@ -31,6 +31,7 @@ export const App: React.FC = () => {
         selectedCertificateIdx: 0,
         certificateEditKey: Rand.ID(),
     });
+    const [WarningDismissed, SetWarningDismissed] = React.useState(false);
     const [InvalidCertificates, setInvalidCertificates] = React.useState<{ [index: number]: string }>({});
     const [NewVersionURL, setNewVersionURL] = React.useState<string>();
     const [LoadingInterop, SetIsLoadingInterop] = React.useState(true);
@@ -112,6 +113,10 @@ export const App: React.FC = () => {
     React.useEffect(() => {
         validateCertificates();
     }, [State]);
+
+    const didDismissWarning = React.useCallback(() => {
+        SetWarningDismissed(true);
+    }, []);
 
     const didClickCertificate = (idx: number) => {
         setState(state => {
@@ -290,6 +295,24 @@ export const App: React.FC = () => {
     if (LoadingInterop) {
         return (
             <Icon.Label icon={<Icon.Spinner pulse/>} label="Loading..." />
+        );
+    }
+
+    if (!WarningDismissed) {
+        return (
+            <div id="main">
+                <div className="dialog">
+                    <div className="dialog-title">
+                        CertBox Is Being Discontinued
+                    </div>
+                    <div className="dialog-body">
+                        <p>The CertBox web and desktop application are being discontinued and will no longer be available after September 1st.</p>
+                    </div>
+                    <div className="dialog-footer">
+                        <Button onClick={didDismissWarning}>Continue</Button>
+                    </div>
+                </div>
+            </div>
         );
     }
 

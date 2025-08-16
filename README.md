@@ -1,3 +1,9 @@
+> [!CAUTION]
+> **CertBox is being discontinued**  
+> The CertBox web and desktop app will no longer be available after September 1st 2025
+
+---
+
 # CertBox
 
 **[Access CertBox Online »](https://web.certbox.io)**  
